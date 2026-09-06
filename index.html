@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi familia">
+<meta name="theme-color" content="#7c3aed">
+<title>Aprender Español — Mi familia</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: radial-gradient(circle at 20% 10%, #f3e8ff 0%, #faf5ff 45%, #fdf2f8 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-x: auto;
+  }
+  .wrap { width: 100%; max-width: 420px; }
+
+  .eyebrow {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #a78bfa;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .page-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #4c1d95;
+    margin: 2px 0 22px;
+  }
+
+  .topic-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .print-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #e9d5ff;
+    background: white;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(124,58,237,0.10);
+  }
+  .print-icon-btn:hover { background: #faf5ff; }
+
+  .back-btn {
+    border: none;
+    background: none;
+    color: #a78bfa;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 4px 0;
+    display: inline-block;
+  }
+
+  .topic-card, .link-card {
+    width: 100%;
+    text-align: left;
+    background: #ffffff;
+    border: 2px solid #e9d5ff;
+    border-radius: 20px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .link-card { background: #faf5ff; border-color: #d8b4fe; margin-bottom: 14px; }
+  .topic-card .label-small { font-size: 11px; color: #a78bfa; font-weight: 700; text-transform: uppercase; }
+  .topic-card .label-big, .link-card .label-big { font-size: 19px; font-weight: 800; color: #4c1d95; }
+  .link-card .label-big { color: #6d28d9; font-size: 20px; }
+  .topic-card .label-sub, .link-card .label-sub { font-size: 13px; color: #9ca3af; margin-top: 2px; }
+  .arrow { font-size: 22px; color: #c4b5fd; }
+
+  .soon-card {
+    width: 100%;
+    background: #fafafa;
+    border: 2px dashed #e5e7eb;
+    border-radius: 20px;
+    padding: 14px 22px;
+    margin-bottom: 10px;
+    color: #b0b0b0;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .soon-card .label-big { font-size: 14px; font-weight: 700; color: #b0b0b0; line-height: 1.3; }
+  .soon-card .label-sub { font-size: 12px; color: #cbcbcb; margin-top: 1px; }
+
+  .block-header {
+    font-size: 12px;
+    font-weight: 800;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 0 8px;
+    padding-left: 2px;
+  }
+  .block-header:first-of-type { margin-top: 10px; }
+
+  .soon-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #c4b5fd;
+    background: #f3e8ff;
+    padding: 3px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+
+  /* card (flashcard / wizard) */
+  .flash-card {
+    background: #fff;
+    border-radius: 24px;
+    border: 2px solid #e9d5ff;
+    box-shadow: 0 10px 30px rgba(124,58,237,0.10);
+    padding: 30px 24px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .flash-word { font-size: 28px; font-weight: 800; color: #5b21b6; }
+  .flash-tag {
+    font-size: 10px; color: white; background: #c4b5fd;
+    padding: 2px 8px; border-radius: 10px; font-weight: 700;
+  }
+  .flash-tr {
+    font-size: 17px; color: #be185d; font-weight: 700;
+    background: #fdf2f8; padding: 6px 18px; border-radius: 999px;
+  }
+  .flash-hint { font-size: 12px; color: #c4b5fd; }
+
+  .progress-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
+  .progress-dots div { width: 20px; height: 6px; border-radius: 4px; background: #ede9fe; }
+
+  .answer-btns { display: flex; gap: 12px; margin-top: 20px; }
+  .answer-btns button {
+    flex: 1; padding: 13px 0; border-radius: 16px; border: none;
+    font-size: 14px; font-weight: 700; cursor: not-allowed;
+    background: #f5f5f5; color: #c4c4c4;
+  }
+  .answer-btns button.active { cursor: pointer; }
+  .answer-btns button.no.active { background: #fee2e2; color: #b91c1c; }
+  .answer-btns button.yes.active { background: #dcfce7; color: #15803d; }
+
+  .counter { text-align: center; margin-top: 12px; font-size: 12px; color: #c4b5fd; }
+
+  .conj-grid {
+    width: 100%; background: #faf5ff; border-radius: 14px; padding: 12px 14px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; font-size: 13px;
+  }
+  .conj-grid span.pron { color: #9ca3af; }
+  .conj-grid b { color: #2d2d2d; }
+
+  .stage-label {
+    font-size: 10px; color: #a78bfa; font-weight: 700;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+  .stage-line { font-size: 13px; color: #374151; }
+
+  .stage-dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+  .stage-dots div { width: 8px; height: 8px; border-radius: 50%; background: #ede9fe; }
+  .stage-dots div.filled { background: #7c3aed; }
+
+  .result-box {
+    background: #fff; border-radius: 24px; border: 2px solid #e9d5ff;
+    padding: 32px 22px; text-align: center;
+  }
+  .result-emoji { font-size: 40px; margin-bottom: 8px; }
+  .result-title { font-size: 18px; font-weight: 800; color: #4c1d95; margin-bottom: 6px; }
+  .result-sub { font-size: 14px; color: #8b7bb8; margin-bottom: 20px; }
+  .chip-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  .chip { background: #fdf2f8; color: #be185d; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; }
+
+  .result-btns { display: flex; gap: 10px; }
+  .result-btns button {
+    flex: 1; padding: 12px 0; border-radius: 16px; font-size: 13px; font-weight: 700; cursor: pointer; border: none;
+  }
+  .btn-primary { background: #7c3aed; color: white; }
+  .btn-secondary { background: white; color: #7c3aed; border: 2px solid #e9d5ff !important; }
+
+  /* quiz */
+  .quiz-sentence {
+    font-size: 19px;
+    font-weight: 700;
+    color: #4c1d95;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .quiz-sentence .blank {
+    display: inline-block;
+    min-width: 60px;
+    border-bottom: 3px solid #d8b4fe;
+    color: #a855f7;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 18px; }
+  .option-btn {
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 2px solid #e9d5ff;
+    background: white;
+    font-size: 15px;
+    font-weight: 700;
+    color: #4c1d95;
+    cursor: pointer;
+    text-align: center;
+  }
+  .option-btn.correct { background: #dcfce7; border-color: #4ade80; color: #15803d; }
+  .option-btn.wrong { background: #fee2e2; border-color: #f87171; color: #b91c1c; }
+  .option-btn.disabled { cursor: default; }
+  .next-btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 13px 0;
+    border-radius: 16px;
+    border: none;
+    background: #7c3aed;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* dialogue flashcards */
+  .dchunk-line { margin-bottom: 12px; text-align: left; width: 100%; }
+  .dchunk-line:last-child { margin-bottom: 0; }
+  .dialog-speaker { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dialog-speaker.ana { color: #6d28d9; }
+  .dialog-speaker.pablo { color: #be185d; }
+  .dchunk-es { font-size: 16px; font-weight: 700; color: #2d2d2d; margin-top: 2px; }
+  .dchunk-ru {
+    font-size: 13px; color: #be185d; font-weight: 600;
+    margin-top: 3px; background: #fdf2f8; display: inline-block;
+    padding: 3px 10px; border-radius: 10px;
+  }
+
+  /* ═══ МАТЕРИАЛЫ (справочник по теме, для чтения на экране) ═══ */
+  .mat-nav {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 20px;
+  }
+  .mat-nav button {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 2px solid #e9d5ff;
+    background: white;
+    color: #7c3aed;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .mat-nav button:hover { background: #faf5ff; }
+
+  .mat-section { margin-bottom: 20px; scroll-margin-top: 16px; }
+  .mat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .mat-header .icon { font-size: 18px; }
+  .mat-header .title { font-size: 16px; font-weight: 800; color: #4c1d95; }
+
+  .mat-card {
+    background: #fff;
+    border: 2px solid #e9d5ff;
+    border-radius: 18px;
+    padding: 4px 14px;
+    box-shadow: 0 6px 20px rgba(124,58,237,0.06);
+  }
+
+  .mat-subhead {
+    font-size: 11px; color: #a78bfa; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 10px 0 2px;
+  }
+  .mat-subhead:first-child { margin-top: 8px; }
+
+  /* строка "слово — перевод" */
+  .mat-row-inline {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 8px 2px; border-bottom: 1px dashed #e9d5ff;
+  }
+  .mat-row-inline:last-child { border-bottom: none; }
+  .mat-row-inline .es { font-size: 14px; font-weight: 700; color: #6d28d9; white-space: nowrap; }
+  .mat-row-inline .ru { font-size: 13px; color: #6b7280; }
+  .mat-row-inline .ru::before { content: "— "; color: #d8b4fe; }
+
+  /* глагол: инфинитив+перевод сверху, спряжение снизу */
+  .mat-row-stacked { padding: 9px 2px; border-bottom: 1px dashed #e9d5ff; }
+  .mat-row-stacked:last-child { border-bottom: none; }
+  .mat-row-stacked .main { font-size: 14px; color: #2d2d2d; }
+  .mat-row-stacked .main b { color: #6d28d9; }
+  .mat-row-stacked .sub { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+
+  /* реплика/пример: текст + перевод в одном абзаце */
+  .mat-row-pair { padding: 9px 2px; border-bottom: 1px dashed #e9d5ff; font-size: 13.5px; line-height: 1.5; color: #2d2d2d; }
+  .mat-row-pair:last-child { border-bottom: none; }
+  .mat-row-pair .ru { color: #be185d; font-style: italic; }
+  .mat-row-pair .speaker { font-weight: 700; }
+  .mat-row-pair .speaker.ana { color: #6d28d9; }
+  .mat-row-pair .speaker.pablo { color: #be185d; }
+
+  /* прилагательное: слово — перевод ≠ антоним — перевод */
+  .mat-row-adj { padding: 9px 2px; border-bottom: 1px dashed #e9d5ff; font-size: 13.5px; line-height: 1.5; }
+  .mat-row-adj:last-child { border-bottom: none; }
+  .mat-row-adj b { color: #6d28d9; }
+  .mat-row-adj .tr { color: #6b7280; }
+  .mat-row-adj .ant-tr { color: #9ca3af; font-style: italic; }
+
+  .mat-note {
+    margin: 10px 0 8px;
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #065f46;
+    line-height: 1.4;
+  }
+  .mat-note b { color: #047857; }
+</style>
+</head>
+
+<body>
+
+<div class="wrap" id="app"></div>
+
+<script>
+/* ═══════════════ ДАННЫЕ ═══════════════ */
+
+const WORDS = [
+  { es: "la madre", ru: "мама" },
+  { es: "el padre", ru: "папа" },
+  { es: "la hermana", ru: "сестра" },
+  { es: "el hermano", ru: "брат" },
+  { es: "la abuela", ru: "бабушка" },
+  { es: "el abuelo", ru: "дедушка" },
+  { es: "el hijo", ru: "сын" },
+  { es: "la hija", ru: "дочь" },
+  { es: "la tía", ru: "тётя" },
+  { es: "el tío", ru: "дядя" },
+  { es: "el primo", ru: "двоюродный брат" },
+  { es: "la prima", ru: "двоюродная сестра" },
+];
+
+const VERBS = [
+  { inf: "ser", tr: "быть", tag: "неправильный",
+    conj: [["yo","soy"],["tú","eres"],["él/ella","es"],["nosotros","somos"],["vosotros","sois"],["ellos","son"]],
+    phrases: ["soy la hija", "es mi tía"],
+    sentences: ["Yo soy la hija de mi madre.", "Mi hermano es el hijo de mi padre."] },
+  { inf: "estar", tr: "быть (состояние)", tag: "неправ. (yo)",
+    conj: [["yo","estoy"],["tú","estás"],["él/ella","está"],["nosotros","estamos"],["vosotros","estáis"],["ellos","están"]],
+    phrases: ["estoy con mi abuela", "está feliz"],
+    sentences: ["Mi abuela está en casa hoy.", "Yo estoy con mi hermana."] },
+  { inf: "tener", tr: "иметь", tag: "e → ie",
+    conj: [["yo","tengo"],["tú","tienes"],["él/ella","tiene"],["nosotros","tenemos"],["vosotros","tenéis"],["ellos","tienen"]],
+    phrases: ["tengo un hermano", "tiene dos primas"],
+    sentences: ["Tengo una hermana y un hermano.", "Mi tía tiene tres hijos."] },
+  { inf: "vivir", tr: "жить", tag: "регулярный",
+    conj: [["yo","vivo"],["tú","vives"],["él/ella","vive"],["nosotros","vivimos"],["vosotros","vivís"],["ellos","viven"]],
+    phrases: ["vivo con mi madre", "vive con sus abuelos"],
+    sentences: ["Vivo con mi padre y mi madre.", "Mi primo vive con su abuela."] },
+  { inf: "llamarse", tr: "зваться", tag: "возвратный",
+    conj: [["yo","me llamo"],["tú","te llamas"],["él/ella","se llama"],["nosotros","nos llamamos"],["vosotros","os llamáis"],["ellos","se llaman"]],
+    phrases: ["mi hermano se llama…", "mi tía se llama…"],
+    sentences: ["Mi hermano se llama Pablo.", "Mi abuela se llama Rosa."] },
+  { inf: "querer", tr: "любить / хотеть", tag: "e → ie",
+    conj: [["yo","quiero"],["tú","quieres"],["él/ella","quiere"],["nosotros","queremos"],["vosotros","queréis"],["ellos","quieren"]],
+    phrases: ["quiero a mi abuela", "quiere a su hermana"],
+    sentences: ["Quiero mucho a mi madre.", "Mi padre quiere a toda la familia."] },
+  { inf: "abrazar", tr: "обнимать", tag: "регулярный",
+    conj: [["yo","abrazo"],["tú","abrazas"],["él/ella","abraza"],["nosotros","abrazamos"],["vosotros","abrazáis"],["ellos","abrazan"]],
+    phrases: ["abrazo a mi padre", "abraza a su hermano"],
+    sentences: ["Abrazo a mi abuela cada día.", "Mi hermana abraza a mi madre."] },
+  { inf: "cuidar", tr: "заботиться", tag: "регулярный",
+    conj: [["yo","cuido"],["tú","cuidas"],["él/ella","cuida"],["nosotros","cuidamos"],["vosotros","cuidáis"],["ellos","cuidan"]],
+    phrases: ["cuido a mi hermana", "cuida a sus abuelos"],
+    sentences: ["Cuido a mi hermana pequeña.", "Mi tía cuida a los abuelos."] },
+  { inf: "ayudar", tr: "помогать", tag: "регулярный",
+    conj: [["yo","ayudo"],["tú","ayudas"],["él/ella","ayuda"],["nosotros","ayudamos"],["vosotros","ayudáis"],["ellos","ayudan"]],
+    phrases: ["ayudo a mi madre", "ayuda a su padre"],
+    sentences: ["Ayudo a mi madre en casa.", "Mi hermano ayuda a mi padre."] },
+  { inf: "parecerse (a)", tr: "быть похожим", tag: "c → zc (yo)",
+    conj: [["yo","me parezco"],["tú","te pareces"],["él/ella","se parece"],["nosotros","nos parecemos"],["vosotros","os parecéis"],["ellos","se parecen"]],
+    phrases: ["me parezco a mi padre", "se parece a su abuela"],
+    sentences: ["Me parezco mucho a mi madre.", "Mi prima se parece a su padre."] },
+];
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const QUESTIONS = [
+  { sentence: "La madre de mi madre es mi ___.", options: ["abuela", "tía", "prima"], answer: "abuela" },
+  { sentence: "El padre de mi padre es mi ___.", options: ["abuelo", "tío", "primo"], answer: "abuelo" },
+  { sentence: "El hijo de mi tía es mi ___.", options: ["primo", "hermano", "tío"], answer: "primo" },
+  { sentence: "La hija de mi tío es mi ___.", options: ["prima", "hermana", "tía"], answer: "prima" },
+  { sentence: "El hermano de mi madre es mi ___.", options: ["tío", "primo", "abuelo"], answer: "tío" },
+  { sentence: "La hermana de mi padre es mi ___.", options: ["tía", "prima", "abuela"], answer: "tía" },
+  { sentence: "Yo ___ (ser) el hijo de mi madre.", options: ["soy", "eres", "es"], answer: "soy" },
+  { sentence: "Mi abuela ___ (tener) tres hijos.", options: ["tiene", "tengo", "tienen"], answer: "tiene" },
+  { sentence: "Nosotros ___ (vivir) con nuestros padres.", options: ["vivimos", "viven", "vivo"], answer: "vivimos" },
+  { sentence: "Mi hermana se ___ (llamarse) Ana.", options: ["llama", "llamo", "llamas"], answer: "llama" },
+  { sentence: "Yo ___ (querer) mucho a mi familia.", options: ["quiero", "quiere", "queremos"], answer: "quiero" },
+  { sentence: "Mi tío ___ (cuidar) a sus hijos.", options: ["cuida", "cuido", "cuidan"], answer: "cuida" },
+];
+
+/* ═══════════════ СОСТОЯНИЕ ═══════════════ */
+
+let state = {
+  view: "landing",
+  // words test
+  wDeck: [], wIndex: 0, wRevealed: false, wKnown: [], wUnknown: [], wFinished: false,
+  // verbs wizard
+  vIndex: 0, vStage: 0, vDone: false,
+  // sentence quiz
+  qDeck: [], qIndex: 0, qSelected: null, qScore: 0, qWrong: [], qFinished: false,
+  // dialogue flashcards
+  dIndex: 0, dRevealed: false, dDone: false,
+  // mixed examples (family + verbs + character)
+  eIndex: 0, eRevealed: false, eDone: false,
+  // adjectives test
+  aDeck: [], aIndex: 0, aRevealed: false, aKnown: [], aUnknown: [], aFinished: false,
+  // pronouns test
+  pDeck: [], pIndex: 0, pRevealed: false, pKnown: [], pUnknown: [], pFinished: false,
+};
+
+const app = document.getElementById("app");
+
+function render() {
+  app.className = "wrap";
+  if (state.view === "landing") return renderLanding();
+  if (state.view === "home") return renderHome();
+  if (state.view === "topic") return renderTopic();
+  if (state.view === "words") return renderWords();
+  if (state.view === "verbs") return renderVerbs();
+  if (state.view === "adj") return renderAdj();
+  if (state.view === "pronouns") return renderPronouns();
+  if (state.view === "quiz") return renderQuiz();
+  if (state.view === "print") return renderPrint();
+  if (state.view === "dialog") return renderDialog();
+  if (state.view === "examples") return renderExamples();
+}
+
+/* ═══════════════ ГЛАВНАЯ ═══════════════ */
+
+function renderLanding() {
+  app.innerHTML = `
+    <div style="text-align:center; margin-bottom:26px;">
+      <div class="eyebrow">Aprender Español</div>
+      <div class="page-title" style="margin-bottom:4px;">Home</div>
+    </div>
+
+    <div class="topic-card" onclick="goHome()">
+      <div>
+        <div class="label-big">🗂️ Temas</div>
+        <div class="label-sub">Все темы по испанскому</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+function renderHome() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goLanding()">← Home</button>
+    <div class="eyebrow">Aprender Español</div>
+    <div class="page-title">Темы</div>
+
+    <div class="block-header">Блок 1. Фундамент</div>
+
+    <div class="topic-card" onclick="goTopic()">
+      <div>
+        <div class="label-small">Тема 1</div>
+        <div class="label-big">Mi familia</div>
+        <div class="label-sub">Моя семья</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="soon-card"><div><div class="label-big">2. El lenguaje de las instrucciones</div><div class="label-sub">язык заданий</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">3. Pedir ayuda en clase</div><div class="label-sub">просить помощь на уроке</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">4. Mi cuaderno y mis apuntes</div><div class="label-sub">тетрадь и записи</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">5. El colegio</div><div class="label-sub">школа</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Блок 2. Знакомая база (presente)</div>
+    <div class="soon-card"><div><div class="label-big">6. Mi rutina diaria</div><div class="label-sub">мой день</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">7. La casa</div><div class="label-sub">дом</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">8. El cuerpo y la salud</div><div class="label-sub">тело и здоровье</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Блок 3. Язык учебника</div>
+    <div class="soon-card"><div><div class="label-big">9. Describir y clasificar</div><div class="label-sub">описывать и классифицировать</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">10. Comparar</div><div class="label-sub">сравнивать</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">11. Explicar causas</div><div class="label-sub">объяснять причины</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Блок 4. Прошедшее время</div>
+    <div class="soon-card"><div><div class="label-big">12. Ayer hice…</div><div class="label-sub">pretérito indefinido</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">13. Cuando era pequeña…</div><div class="label-sub">imperfecto</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">14. Contar una historia</div><div class="label-sub">оба времени вместе</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Блок 5. Применение к предметам</div>
+    <div class="soon-card"><div><div class="label-big">15. La comida y las compras</div><div class="label-sub">еда и покупки</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">16. La Tierra y el universo</div><div class="label-sub">Земля и вселенная</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">17. España: geografía e historia</div><div class="label-sub">Испания</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Блок 6. Сложные навыки</div>
+    <div class="soon-card"><div><div class="label-big">18. Resumir un texto</div><div class="label-sub">пересказ текста</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">19. Aprender a aprender</div><div class="label-sub">учиться самостоятельно</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">20. La ciudad y el transporte</div><div class="label-sub">город и транспорт</div></div><span class="soon-badge">скоро</span></div>
+    <div class="soon-card"><div><div class="label-big">21. Las profesiones y mi futuro</div><div class="label-sub">профессии и будущее</div></div><span class="soon-badge">скоро</span></div>
+  `;
+}
+
+function goLanding() {
+  state.view = "landing";
+  render();
+}
+
+function goTopic() {
+  state.view = "topic";
+  render();
+}
+
+/* ═══════════════ ТЕМА ═══════════════ */
+
+function renderTopic() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goHome()">← Все темы</button>
+    <div class="eyebrow">Тема 1</div>
+    <div class="topic-title-row">
+      <div class="page-title" style="margin-bottom:0;">Mi familia</div>
+      <button class="print-icon-btn" onclick="goPrint()" title="Материалы">📖</button>
+    </div>
+
+    <div class="link-card" onclick="goWords()">
+      <div>
+        <div class="label-big">🟣 Существительные</div>
+        <div class="label-sub">12 слов о семье — тест «знаю / не знаю»</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goVerbs()">
+      <div>
+        <div class="label-big">🟣 Глаголы</div>
+        <div class="label-sub">10 глаголов — карточки шаг за шагом</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAdj()">
+      <div>
+        <div class="label-big">🙂 Прилагательные</div>
+        <div class="label-sub">17 черт характера (SER) — тест с антонимами</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goPronouns()">
+      <div>
+        <div class="label-big">🔤 Местоимения</div>
+        <div class="label-sub">Личные и притяжательные — тест «знаю / не знаю»</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goQuiz()">
+      <div>
+        <div class="label-big">🟣 Тест: предложения</div>
+        <div class="label-sub">12 вопросов — слова и глаголы вместе</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goDialog()">
+      <div>
+        <div class="label-big">💬 Диалог</div>
+        <div class="label-sub">16 реплик — переверни карточку, узнай перевод</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goExamples()">
+      <div>
+        <div class="label-big">📚 Примеры</div>
+        <div class="label-sub">Семья + глаголы + характер — 12 предложений</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+function goHome() { state.view = "home"; render(); }
+
+/* ═══════════════ СЛОВА ═══════════════ */
+
+function goWords() {
+  state.view = "words";
+  state.wDeck = shuffle(WORDS);
+  state.wIndex = 0;
+  state.wRevealed = false;
+  state.wKnown = [];
+  state.wUnknown = [];
+  state.wFinished = false;
+  render();
+}
+
+function renderWords() {
+  const total = state.wDeck.length;
+  const progressDone = state.wKnown.length + state.wUnknown.length;
+
+  if (state.wFinished) {
+    const allKnown = state.wUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Существительные</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.wKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.wUnknown.map(w => `<div class="chip">${w.es} — ${w.ru}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewWords()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goWords()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.wDeck[state.wIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Существительные</div>
+
+    <div class="progress-dots">
+      ${state.wDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.wRevealed ? '' : 'revealWord()'}" style="cursor:${state.wRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.es}</div>
+      ${state.wRevealed
+        ? `<div class="flash-tr">${current.ru}</div>${current.antEs ? `<div style="font-size:13px; color:#4b5563; margin-top:2px;">≠ <b style="color:#6d28d9;">${current.antEs}</b> — ${current.antRu}</div>` : ""}`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.wRevealed ? 'active' : ''}" onclick="${state.wRevealed ? 'answerWord(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.wRevealed ? 'active' : ''}" onclick="${state.wRevealed ? 'answerWord(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealWord() { state.wRevealed = true; render(); }
+
+function answerWord(isKnown) {
+  const current = state.wDeck[state.wIndex];
+  if (isKnown) state.wKnown.push(current); else state.wUnknown.push(current);
+  if (state.wIndex + 1 < state.wDeck.length) {
+    state.wIndex++;
+    state.wRevealed = false;
+  } else {
+    state.wFinished = true;
+  }
+  render();
+}
+
+function reviewWords() {
+  state.wDeck = shuffle(state.wUnknown);
+  state.wKnown = [];
+  state.wUnknown = [];
+  state.wIndex = 0;
+  state.wRevealed = false;
+  state.wFinished = false;
+  render();
+}
+
+/* ═══════════════ ПРИЛАГАТЕЛЬНЫЕ (тест с антонимами) ═══════════════ */
+
+function goAdj() {
+  state.view = "adj";
+  state.aDeck = shuffle(ADJECTIVES);
+  state.aIndex = 0;
+  state.aRevealed = false;
+  state.aKnown = [];
+  state.aUnknown = [];
+  state.aFinished = false;
+  render();
+}
+
+function renderAdj() {
+  const total = state.aDeck.length;
+  const progressDone = state.aKnown.length + state.aUnknown.length;
+
+  if (state.aFinished) {
+    const allKnown = state.aUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Прилагательные</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🙂"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.aKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.aUnknown.map(w => `<div class="chip">${w.es} — ${w.ru}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewAdj()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goAdj()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.aDeck[state.aIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Прилагательные</div>
+
+    <div class="progress-dots">
+      ${state.aDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.aRevealed ? '' : 'revealAdj()'}" style="cursor:${state.aRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.es}</div>
+      ${state.aRevealed
+        ? `<div class="flash-tr">${current.ru}</div><div style="font-size:13px; color:#4b5563; margin-top:2px;">≠ <b style="color:#6d28d9;">${current.antEs}</b> — ${current.antRu}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод и антоним</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.aRevealed ? 'active' : ''}" onclick="${state.aRevealed ? 'answerAdj(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.aRevealed ? 'active' : ''}" onclick="${state.aRevealed ? 'answerAdj(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealAdj() { state.aRevealed = true; render(); }
+
+function answerAdj(isKnown) {
+  const current = state.aDeck[state.aIndex];
+  if (isKnown) state.aKnown.push(current); else state.aUnknown.push(current);
+  if (state.aIndex + 1 < state.aDeck.length) {
+    state.aIndex++;
+    state.aRevealed = false;
+  } else {
+    state.aFinished = true;
+  }
+  render();
+}
+
+function reviewAdj() {
+  state.aDeck = shuffle(state.aUnknown);
+  state.aKnown = [];
+  state.aUnknown = [];
+  state.aIndex = 0;
+  state.aRevealed = false;
+  state.aFinished = false;
+  render();
+}
+
+/* ═══════════════ МЕСТОИМЕНИЯ (тест) ═══════════════ */
+
+function goPronouns() {
+  state.view = "pronouns";
+  state.pDeck = shuffle(PRONOUNS_ALL);
+  state.pIndex = 0;
+  state.pRevealed = false;
+  state.pKnown = [];
+  state.pUnknown = [];
+  state.pFinished = false;
+  render();
+}
+
+function renderPronouns() {
+  const total = state.pDeck.length;
+  const progressDone = state.pKnown.length + state.pUnknown.length;
+
+  if (state.pFinished) {
+    const allKnown = state.pUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Местоимения</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.pKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.pUnknown.map(w => `<div class="chip">${w.es} — ${w.ru}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewPronouns()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goPronouns()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.pDeck[state.pIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Местоимения</div>
+
+    <div class="progress-dots">
+      ${state.pDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.pRevealed ? '' : 'revealPronoun()'}" style="cursor:${state.pRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.es}</div>
+      ${state.pRevealed
+        ? `<div class="flash-tr">${current.ru}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.pRevealed ? 'active' : ''}" onclick="${state.pRevealed ? 'answerPronoun(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.pRevealed ? 'active' : ''}" onclick="${state.pRevealed ? 'answerPronoun(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealPronoun() { state.pRevealed = true; render(); }
+
+function answerPronoun(isKnown) {
+  const current = state.pDeck[state.pIndex];
+  if (isKnown) state.pKnown.push(current); else state.pUnknown.push(current);
+  if (state.pIndex + 1 < state.pDeck.length) {
+    state.pIndex++;
+    state.pRevealed = false;
+  } else {
+    state.pFinished = true;
+  }
+  render();
+}
+
+function reviewPronouns() {
+  state.pDeck = shuffle(state.pUnknown);
+  state.pKnown = [];
+  state.pUnknown = [];
+  state.pIndex = 0;
+  state.pRevealed = false;
+  state.pFinished = false;
+  render();
+}
+
+/* ═══════════════ ГЛАГОЛЫ ═══════════════ */
+
+function goVerbs() {
+  state.view = "verbs";
+  state.vIndex = 0;
+  state.vStage = 0;
+  state.vDone = false;
+  render();
+}
+
+function renderVerbs() {
+  if (state.vDone) {
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Verbos</div>
+      <div class="result-box">
+        <div class="result-emoji">🌟</div>
+        <div class="result-title">Все 10 глаголов пройдены!</div>
+        <div class="result-sub">ser · estar · tener · vivir · llamarse · querer · abrazar · cuidar · ayudar · parecerse</div>
+        <button class="btn-primary" style="width:100%;" onclick="goVerbs()">Начать заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const verb = VERBS[state.vIndex];
+  const isLast = state.vIndex === VERBS.length - 1;
+  const hint = state.vStage === 0 ? "нажми — покажу, как меняется"
+    : state.vStage === 1 ? "нажми — покажу фразы и предложения"
+    : isLast ? "нажми — это был последний глагол" : "нажми — следующий глагол";
+
+  let conjHtml = "", phrasesHtml = "";
+  if (state.vStage >= 1) {
+    conjHtml = `<div class="conj-grid">${verb.conj.map(([p,f]) => `<div><span class="pron">${p}</span> <b>${f}</b></div>`).join("")}</div>`;
+  }
+  if (state.vStage >= 2) {
+    phrasesHtml = `
+      <div style="width:100%;">
+        <div class="stage-label">Фразы</div>
+        ${verb.phrases.map(p => `<div class="stage-line">${p}</div>`).join("")}
+        <div class="stage-label" style="margin-top:8px;">Предложения</div>
+        ${verb.sentences.map(s => `<div class="stage-line">${s}</div>`).join("")}
+      </div>`;
+  }
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Mi familia · Verbos</div>
+    <div class="page-title" style="font-size:18px; margin-bottom:14px;">Глагол ${state.vIndex + 1} из ${VERBS.length}</div>
+
+    <div class="progress-dots">
+      ${VERBS.map((_, i) => `<div style="width:18px; background:${i < state.vIndex ? '#a855f7' : i === state.vIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="tapVerb()" style="min-height:280px;">
+      <div style="text-align:center;">
+        <div style="display:flex; align-items:baseline; gap:8px; justify-content:center;">
+          <span class="flash-word" style="font-size:26px;">${verb.inf}</span>
+          <span class="flash-tag">${verb.tag}</span>
+        </div>
+        <div class="flash-tr" style="margin-top:6px; display:inline-block;">${verb.tr}</div>
+      </div>
+      ${conjHtml}
+      ${phrasesHtml}
+      <div class="flash-hint">${hint}</div>
+    </div>
+
+    <div class="stage-dots">
+      ${[0,1,2].map(s => `<div class="${state.vStage >= s ? 'filled' : ''}"></div>`).join("")}
+    </div>
+  `;
+}
+
+function tapVerb() {
+  const isLast = state.vIndex === VERBS.length - 1;
+  if (state.vStage < 2) {
+    state.vStage++;
+  } else if (isLast) {
+    state.vDone = true;
+  } else {
+    state.vIndex++;
+    state.vStage = 0;
+  }
+  render();
+}
+
+/* ═══════════════ ТЕСТ: ПРЕДЛОЖЕНИЯ ═══════════════ */
+
+function goQuiz() {
+  state.view = "quiz";
+  state.qDeck = shuffle(QUESTIONS).map(q => ({ ...q, shuffledOptions: shuffle(q.options) }));
+  state.qIndex = 0;
+  state.qSelected = null;
+  state.qScore = 0;
+  state.qWrong = [];
+  state.qFinished = false;
+  render();
+}
+
+function renderQuiz() {
+  const total = state.qDeck.length;
+
+  if (state.qFinished) {
+    const allCorrect = state.qWrong.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Тест</div>
+      <div class="result-box">
+        <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allCorrect ? "Все 12 правильно!" : `Правильно: ${state.qScore} из ${total}`}</div>
+        ${!allCorrect ? `<div class="chip-list">${state.qWrong.map(w => `<div class="chip">${w.sentence.replace("___", w.answer)}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          <button class="btn-primary" onclick="goQuiz()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const q = state.qDeck[state.qIndex];
+  const answered = state.qSelected !== null;
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Тест</div>
+
+    <div class="progress-dots">
+      ${state.qDeck.map((_, i) => `<div style="background:${i < state.qIndex ? '#a855f7' : i === state.qIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" style="cursor:default; min-height:auto;">
+      <div class="quiz-sentence">${q.sentence.replace("___", '<span class="blank">___</span>')}</div>
+
+      <div class="quiz-options">
+        ${q.shuffledOptions.map(opt => {
+          let cls = "option-btn";
+          if (answered) {
+            cls += " disabled";
+            if (opt === q.answer) cls += " correct";
+            else if (opt === state.qSelected) cls += " wrong";
+          }
+          return `<button class="${cls}" onclick="${answered ? '' : `selectQuizAnswer('${opt}')`}">${opt}</button>`;
+        }).join("")}
+      </div>
+
+      ${answered ? `<button class="next-btn" onclick="nextQuizQuestion()">${state.qIndex + 1 < total ? 'Дальше →' : 'Результаты →'}</button>` : ""}
+    </div>
+
+    <div class="counter">${state.qIndex + 1} из ${total}</div>
+  `;
+}
+
+function selectQuizAnswer(opt) {
+  state.qSelected = opt;
+  const q = state.qDeck[state.qIndex];
+  if (opt === q.answer) {
+    state.qScore++;
+  } else {
+    state.qWrong.push(q);
+  }
+  render();
+}
+
+function nextQuizQuestion() {
+  if (state.qIndex + 1 < state.qDeck.length) {
+    state.qIndex++;
+    state.qSelected = null;
+    render();
+  } else {
+    state.qFinished = true;
+    render();
+  }
+}
+
+/* ═══════════════ ПЕЧАТЬ (А5) ═══════════════ */
+
+const SENTENCES_FULL = [
+  { es: "La madre de mi madre es mi abuela.", ru: "Мама моей мамы — моя бабушка." },
+  { es: "El padre de mi padre es mi abuelo.", ru: "Папа моего папы — мой дедушка." },
+  { es: "El hijo de mi tía es mi primo.", ru: "Сын моей тёти — мой двоюродный брат." },
+  { es: "La hija de mi tío es mi prima.", ru: "Дочь моего дяди — моя двоюродная сестра." },
+  { es: "El hermano de mi madre es mi tío.", ru: "Брат моей мамы — мой дядя." },
+  { es: "La hermana de mi padre es mi tía.", ru: "Сестра моего папы — моя тётя." },
+  { es: "Yo soy el hijo de mi madre.", ru: "Я сын своей мамы." },
+  { es: "Mi abuela tiene tres hijos.", ru: "У моей бабушки трое детей." },
+  { es: "Nosotros vivimos con nuestros padres.", ru: "Мы живём с родителями." },
+  { es: "Mi hermana se llama Ana.", ru: "Мою сестру зовут Ана." },
+  { es: "Yo quiero mucho a mi familia.", ru: "Я очень люблю свою семью." },
+  { es: "Mi tío cuida a sus hijos.", ru: "Мой дядя заботится о своих детях." },
+];
+
+const PERSONAL_PRONOUNS = [
+  { es: "yo", ru: "я" },
+  { es: "tú", ru: "ты" },
+  { es: "él", ru: "он" },
+  { es: "ella", ru: "она" },
+  { es: "nosotros / nosotras", ru: "мы" },
+  { es: "vosotros / vosotras", ru: "вы (группа)" },
+  { es: "ellos / ellas", ru: "они" },
+];
+
+const POSSESSIVE_PRONOUNS = [
+  { es: "mi / mis", ru: "мой / мои" },
+  { es: "tu / tus", ru: "твой / твои" },
+  { es: "su / sus", ru: "его / её / их" },
+  { es: "nuestro / nuestra", ru: "наш / наша" },
+  { es: "nuestros / nuestras", ru: "наши" },
+];
+
+const ADJECTIVES = [
+  { es: "hablador/-a", ru: "разговорчивый", antEs: "callado/-a", antRu: "молчаливый" },
+  { es: "interesante, divertido/-a", ru: "интересный, весёлый", antEs: "aburrido/-a", antRu: "скучный" },
+  { es: "abierto/-a", ru: "открытый", antEs: "cerrado/-a", antRu: "закрытый" },
+  { es: "alegre", ru: "весёлый, радостный", antEs: "serio/-a, triste", antRu: "серьёзный, грустный" },
+  { es: "simpático/-a, majo/-a", ru: "симпатичный, приятный", antEs: "antipático/-a", antRu: "неприятный" },
+  { es: "generoso/-a", ru: "щедрый", antEs: "egoísta", antRu: "эгоистичный" },
+  { es: "optimista", ru: "оптимистичный", antEs: "pesimista", antRu: "пессимистичный" },
+  { es: "inteligente", ru: "умный", antEs: "tonto/-a", antRu: "глупый" },
+  { es: "extrovertido/-a", ru: "экстраверт", antEs: "introvertido/-a", antRu: "интроверт" },
+  { es: "trabajador/+a", ru: "трудолюбивый", antEs: "vago/-a, perezoso/-a", antRu: "ленивый" },
+  { es: "responsable", ru: "ответственный", antEs: "irresponsable", antRu: "безответственный" },
+  { es: "sociable", ru: "общительный", antEs: "tímido/-a", antRu: "стеснительный" },
+  { es: "tranquilo/-a", ru: "спокойный", antEs: "nervioso/-a", antRu: "нервный" },
+  { es: "agradable", ru: "приятный", antEs: "desagradable", antRu: "неприятный" },
+  { es: "honesto/-a, sincero/-a", ru: "честный, искренний", antEs: "mentiroso/-a", antRu: "лживый" },
+  { es: "modesto/-a, humilde", ru: "скромный", antEs: "egocéntrico/-a", antRu: "эгоцентричный" },
+  { es: "educado/-a", ru: "воспитанный", antEs: "maleducado/-a", antRu: "невоспитанный" },
+];
+
+/* объединённый словарь: слова + глаголы + местоимения + прилагательные */
+const VOCAB_ALL = [
+  ...WORDS.map(w => ({ es: w.es, ru: w.ru })),
+  ...VERBS.map(v => ({ es: v.inf, ru: v.tr })),
+  ...PERSONAL_PRONOUNS.map(p => ({ es: p.es, ru: p.ru })),
+  ...POSSESSIVE_PRONOUNS.map(p => ({ es: p.es, ru: p.ru })),
+  ...ADJECTIVES.map(a => ({ es: a.es, ru: a.ru, antEs: a.antEs, antRu: a.antRu })),
+];
+
+const PRONOUNS_ALL = [
+  ...PERSONAL_PRONOUNS.map(p => ({ es: p.es, ru: p.ru })),
+  ...POSSESSIVE_PRONOUNS.map(p => ({ es: p.es, ru: p.ru })),
+];
+
+
+const EXAMPLES = [
+  { es: "Mi madre es muy generosa y trabajadora.", ru: "Моя мама очень щедрая и трудолюбивая." },
+  { es: "Mi abuelo es tranquilo y sociable.", ru: "Мой дедушка спокойный и общительный." },
+  { es: "Mi hermana es un poco tímida, pero muy inteligente.", ru: "Моя сестра немного стеснительная, но очень умная." },
+  { es: "Yo vivo con mi padre, que es responsable y honesto.", ru: "Я живу с папой, который ответственный и честный." },
+  { es: "Mi tío tiene un carácter alegre y optimista.", ru: "У дяди весёлый и оптимистичный характер." },
+  { es: "Mi prima es habladora y extrovertida.", ru: "Моя двоюродная сестра разговорчивая и экстравертная." },
+  { es: "Cuido a mi abuela porque a veces está nerviosa.", ru: "Я забочусь о бабушке, потому что она иногда нервничает." },
+  { es: "Mi hermano se llama Pablo y es muy educado.", ru: "Моего брата зовут Пабло, он очень воспитанный." },
+  { es: "Quiero mucho a mi familia porque todos son simpáticos.", ru: "Я очень люблю свою семью, потому что все они симпатичные." },
+  { es: "Mi tía ayuda a todos porque es muy responsable.", ru: "Моя тётя всем помогает, потому что очень ответственная." },
+  { es: "Me parezco a mi padre: los dos somos tranquilos y trabajadores.", ru: "Я похож на отца: мы оба спокойные и трудолюбивые." },
+  { es: "Mi primo es un poco vago, pero muy simpático.", ru: "Мой двоюродный брат немного ленивый, но очень симпатичный." },
+];
+
+const DIALOGUE = [
+  { speaker: "Ana", cls: "ana", es: "¡Hola! ¿Cómo te llamas?", ru: "Привет! Как тебя зовут?" },
+  { speaker: "Pablo", cls: "pablo", es: "Me llamo Pablo. ¿Y tú?", ru: "Меня зовут Пабло. А тебя?" },
+  { speaker: "Ana", cls: "ana", es: "Yo me llamo Ana. ¿Dónde vives?", ru: "Меня зовут Ана. Где ты живёшь?" },
+  { speaker: "Pablo", cls: "pablo", es: "Vivo con mi madre y mi padre. ¿Y tú?", ru: "Я живу с мамой и папой. А ты?" },
+  { speaker: "Ana", cls: "ana", es: "Yo vivo con mi abuela también.", ru: "Я тоже живу с бабушкой." },
+  { speaker: "Pablo", cls: "pablo", es: "¿Tienes hermanos?", ru: "У тебя есть братья и сёстры?" },
+  { speaker: "Ana", cls: "ana", es: "Sí, tengo una hermana y un hermano. Soy la hija mayor.", ru: "Да, у меня есть сестра и брат. Я старшая дочь." },
+  { speaker: "Pablo", cls: "pablo", es: "Yo soy el hijo menor. Tengo un primo y una prima.", ru: "Я младший сын. У меня есть двоюродный брат и сестра." },
+  { speaker: "Ana", cls: "ana", es: "¿Te pareces a tu madre o a tu padre?", ru: "Ты похож на маму или на папу?" },
+  { speaker: "Pablo", cls: "pablo", es: "Me parezco a mi padre. ¿Y tú?", ru: "Я похож на папу. А ты?" },
+  { speaker: "Ana", cls: "ana", es: "Yo me parezco a mi abuela.", ru: "Я похожа на бабушку." },
+  { speaker: "Pablo", cls: "pablo", es: "¿Dónde está tu abuelo?", ru: "Где твой дедушка?" },
+  { speaker: "Ana", cls: "ana", es: "Mi abuelo está en Madrid, pero mi tío lo cuida cada semana.", ru: "Мой дедушка в Мадриде, но дядя заботится о нём каждую неделю." },
+  { speaker: "Pablo", cls: "pablo", es: "¡Qué bien! Yo quiero mucho a mi familia. Abrazo a mis abuelos cada domingo.", ru: "Здорово! Я очень люблю свою семью. Обнимаю бабушку с дедушкой каждое воскресенье." },
+  { speaker: "Ana", cls: "ana", es: "Yo también. Mi tía me ayuda mucho en casa.", ru: "Я тоже. Тётя мне очень помогает дома." },
+  { speaker: "Pablo", cls: "pablo", es: "¡Qué familia tan bonita!", ru: "Какая красивая семья!" },
+];
+
+function goPrint() {
+  state.view = "print";
+  render();
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+function renderPrint() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Mi familia</div>
+    <div class="page-title" style="margin-bottom:14px;">📖 Материалы</div>
+
+    <div class="mat-nav">
+      <button onclick="scrollToSection('sec-pronouns')">🔤 Местоимения</button>
+      <button onclick="scrollToSection('sec-words')">🟣 Слова</button>
+      <button onclick="scrollToSection('sec-verbs')">🟣 Глаголы</button>
+      <button onclick="scrollToSection('sec-adj')">🙂 Прилагательные</button>
+      <button onclick="scrollToSection('sec-sentences')">🟣 Предложения</button>
+      <button onclick="scrollToSection('sec-dialog')">💬 Диалог</button>
+      <button onclick="scrollToSection('sec-examples')">📚 Примеры</button>
+    </div>
+
+    <!-- МЕСТОИМЕНИЯ -->
+    <div class="mat-section" id="sec-pronouns">
+      <div class="mat-header"><span class="icon">🔤</span><span class="title">Местоимения</span></div>
+      <div class="mat-card">
+        <div class="mat-subhead">Личные</div>
+        ${PERSONAL_PRONOUNS.map(p => `<div class="mat-row-inline"><span class="es">${p.es}</span><span class="ru">${p.ru}</span></div>`).join("")}
+        <div class="mat-subhead">Притяжательные</div>
+        ${POSSESSIVE_PRONOUNS.map(p => `<div class="mat-row-inline"><span class="es">${p.es}</span><span class="ru">${p.ru}</span></div>`).join("")}
+      </div>
+      <div class="mat-note">
+        💡 <b>mi</b> не меняется по роду: <b>mi hermano</b> / <b>mi hermana</b>. А <b>nuestro/nuestra</b> меняется: <b>nuestro hermano</b>, <b>nuestra hermana</b>.
+      </div>
+    </div>
+
+    <!-- СЛОВА -->
+    <div class="mat-section" id="sec-words">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Слова</span></div>
+      <div class="mat-card">
+        ${WORDS.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <!-- ГЛАГОЛЫ -->
+    <div class="mat-section" id="sec-verbs">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Глаголы</span></div>
+      <div class="mat-card">
+        ${VERBS.map(v => `
+          <div class="mat-row-stacked">
+            <div class="main"><b>${v.inf}</b> — ${v.tr}</div>
+            <div class="sub">${v.conj.map(c => c[1]).join(" — ")}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <!-- ПРИЛАГАТЕЛЬНЫЕ -->
+    <div class="mat-section" id="sec-adj">
+      <div class="mat-header"><span class="icon">🙂</span><span class="title">Прилагательные (SER)</span></div>
+      <div class="mat-card">
+        ${ADJECTIVES.map(a => `
+          <div class="mat-row-adj">
+            <b>${a.es}</b> <span class="tr">— ${a.ru}</span> ≠ <b>${a.antEs}</b> <span class="ant-tr">— ${a.antRu}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <!-- ПРЕДЛОЖЕНИЯ -->
+    <div class="mat-section" id="sec-sentences">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Предложения</span></div>
+      <div class="mat-card">
+        ${SENTENCES_FULL.map(s => `<div class="mat-row-pair">${s.es} <span class="ru">— ${s.ru}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <!-- ДИАЛОГ -->
+    <div class="mat-section" id="sec-dialog">
+      <div class="mat-header"><span class="icon">💬</span><span class="title">Диалог</span></div>
+      <div class="mat-card">
+        ${DIALOGUE.map(d => `
+          <div class="mat-row-pair">
+            <span class="speaker ${d.cls}">${d.speaker}:</span> ${d.es} <span class="ru">— ${d.ru}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <!-- ПРИМЕРЫ -->
+    <div class="mat-section" id="sec-examples">
+      <div class="mat-header"><span class="icon">📚</span><span class="title">Примеры</span></div>
+      <div class="mat-card">
+        ${EXAMPLES.map(s => `<div class="mat-row-pair">${s.es} <span class="ru">— ${s.ru}</span></div>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* ═══════════════ КАРТОЧКИ ДИАЛОГА (пачками по 5 реплик) ═══════════════ */
+
+function chunkDialogue(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
+  return chunks;
+}
+const DIALOGUE_CHUNKS = chunkDialogue(DIALOGUE, 5);
+
+function goDialog() {
+  state.view = "dialog";
+  state.dIndex = 0;
+  state.dRevealed = false;
+  state.dDone = false;
+  render();
+}
+
+function renderDialog() {
+  const total = DIALOGUE_CHUNKS.length;
+
+  if (state.dDone) {
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Диалог</div>
+      <div class="result-box">
+        <div class="result-emoji">🌟</div>
+        <div class="result-title">Весь диалог пройден!</div>
+        <div class="result-sub">Ana и Pablo рассказали о своей семье — 16 реплик</div>
+        <button class="btn-primary" style="width:100%;" onclick="goDialog()">Начать заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const chunk = DIALOGUE_CHUNKS[state.dIndex];
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Mi familia · Диалог</div>
+    <div class="page-title" style="font-size:18px; margin-bottom:14px;">Карточка ${state.dIndex + 1} из ${total}</div>
+
+    <div class="progress-dots">
+      ${DIALOGUE_CHUNKS.map((_, i) => `<div style="background:${i < state.dIndex ? '#a855f7' : i === state.dIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.dRevealed ? '' : 'revealDialogLine()'}" style="cursor:${state.dRevealed ? 'default' : 'pointer'}; align-items:flex-start; min-height:auto;">
+      ${chunk.map(line => `
+        <div class="dchunk-line">
+          <span class="dialog-speaker ${line.cls}">${line.speaker}</span>
+          <div class="dchunk-es">${line.es}</div>
+          ${state.dRevealed ? `<div class="dchunk-ru">${line.ru}</div>` : ""}
+        </div>
+      `).join("")}
+      ${!state.dRevealed ? `<div class="flash-hint" style="width:100%; text-align:center; margin-top:6px;">нажми, чтобы увидеть перевод</div>` : ""}
+    </div>
+
+    ${state.dRevealed ? `<button class="next-btn" onclick="nextDialogLine()">${state.dIndex + 1 < total ? 'Дальше →' : 'Готово →'}</button>` : ""}
+
+    <div class="counter">${state.dIndex + 1} из ${total}</div>
+  `;
+}
+
+function revealDialogLine() {
+  state.dRevealed = true;
+  render();
+}
+
+function nextDialogLine() {
+  if (state.dIndex + 1 < DIALOGUE_CHUNKS.length) {
+    state.dIndex++;
+    state.dRevealed = false;
+    render();
+  } else {
+    state.dDone = true;
+    render();
+  }
+}
+
+/* ═══════════════ ПРИМЕРЫ: СЕМЬЯ + ГЛАГОЛЫ + ХАРАКТЕР ═══════════════ */
+
+function goExamples() {
+  state.view = "examples";
+  state.eIndex = 0;
+  state.eRevealed = false;
+  state.eDone = false;
+  render();
+}
+
+function renderExamples() {
+  const total = EXAMPLES.length;
+
+  if (state.eDone) {
+    app.innerHTML = `
+      <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mi familia · Примеры</div>
+      <div class="result-box">
+        <div class="result-emoji">🌟</div>
+        <div class="result-title">Все 12 предложений пройдены!</div>
+        <button class="btn-primary" style="width:100%;" onclick="goExamples()">Начать заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const s = EXAMPLES[state.eIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goTopic()">← Mi familia</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Mi familia · Примеры</div>
+    <div class="page-title" style="font-size:18px; margin-bottom:14px;">Предложение ${state.eIndex + 1} из ${total}</div>
+
+    <div class="progress-dots">
+      ${EXAMPLES.map((_, i) => `<div style="background:${i < state.eIndex ? '#a855f7' : i === state.eIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.eRevealed ? '' : 'revealExample()'}" style="cursor:${state.eRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word" style="font-size:19px; line-height:1.4;">${s.es}</div>
+      ${state.eRevealed
+        ? `<div class="dchunk-ru" style="font-size:15px; padding:8px 16px;">${s.ru}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод</div>`}
+    </div>
+
+    ${state.eRevealed ? `<button class="next-btn" onclick="nextExample()">${state.eIndex + 1 < total ? 'Дальше →' : 'Готово →'}</button>` : ""}
+
+    <div class="counter">${state.eIndex + 1} из ${total}</div>
+  `;
+}
+
+function revealExample() {
+  state.eRevealed = true;
+  render();
+}
+
+function nextExample() {
+  if (state.eIndex + 1 < EXAMPLES.length) {
+    state.eIndex++;
+    state.eRevealed = false;
+    render();
+  } else {
+    state.eDone = true;
+    render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
