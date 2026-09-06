@@ -416,6 +416,36 @@ const VERBS = [
     sentences: ["Me parezco mucho a mi madre.", "Mi prima se parece a su padre."] },
 ];
 
+/* Слова и глаголы из бумажного учебника (сканы страниц), добавляются сюда по мере фотографирования новых страниц */
+const BOOK_WORDS = [
+  { es: "hace calor", ru: "жарко" },
+  { es: "hace viento", ru: "ветрено" },
+  { es: "nubes", ru: "облака" },
+  { es: "lluvia", ru: "дождь" },
+  { es: "nieve", ru: "снег" },
+  { es: "viento", ru: "ветер" },
+  { es: "maletas", ru: "чемоданы" },
+  { es: "pastel", ru: "торт, пирог" },
+  { es: "ejercicio", ru: "упражнение" },
+  { es: "tarea", ru: "домашнее задание" },
+];
+
+const BOOK_VERBS = [
+  { es: "mirar", ru: "смотреть" },
+  { es: "llegar", ru: "прибывать" },
+  { es: "buscar", ru: "искать" },
+  { es: "enseñar", ru: "учить, преподавать" },
+  { es: "comprar", ru: "покупать" },
+  { es: "necesitar", ru: "нуждаться" },
+  { es: "pagar", ru: "платить" },
+  { es: "regresar", ru: "возвращаться" },
+  { es: "tomar", ru: "брать, пить" },
+  { es: "preparar", ru: "готовить" },
+  { es: "arreglar", ru: "чинить, улаживать" },
+  { es: "viajar", ru: "путешествовать" },
+  { es: "explicar", ru: "объяснять" },
+];
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -466,6 +496,7 @@ function render() {
   app.className = "wrap";
   if (state.view === "landing") return renderLanding();
   if (state.view === "home") return renderHome();
+  if (state.view === "book") return renderBook();
   if (state.view === "topic") return renderTopic();
   if (state.view === "words") return renderWords();
   if (state.view === "verbs") return renderVerbs();
@@ -490,6 +521,14 @@ function renderLanding() {
       <div>
         <div class="label-big">🗂️ Temas</div>
         <div class="label-sub">Все темы по испанскому</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="topic-card" onclick="goBook()">
+      <div>
+        <div class="label-big">📗 Book</div>
+        <div class="label-sub">Слова и глаголы из бумажного учебника</div>
       </div>
       <div class="arrow">→</div>
     </div>
@@ -549,6 +588,34 @@ function renderHome() {
 function goLanding() {
   state.view = "landing";
   render();
+}
+
+function goBook() {
+  state.view = "book";
+  render();
+}
+
+function renderBook() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goLanding()">← Home</button>
+    <div class="eyebrow">Aprender Español</div>
+    <div class="page-title" style="margin-bottom:14px;">📗 Book</div>
+    <div class="label-sub" style="margin-bottom:18px;">Слова и фразы из бумажного учебника — сюда попадает всё, что мы фотографируем со страниц</div>
+
+    <div class="mat-section" id="sec-book-words">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Слова и фразы</span></div>
+      <div class="mat-card">
+        ${BOOK_WORDS.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-book-verbs">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Глаголы на -ar</span></div>
+      <div class="mat-card">
+        ${BOOK_VERBS.map(v => `<div class="mat-row-inline"><span class="es">${v.es}</span><span class="ru">${v.ru}</span></div>`).join("")}
+      </div>
+    </div>
+  `;
 }
 
 function goTopic() {
