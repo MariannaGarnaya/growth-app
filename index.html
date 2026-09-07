@@ -446,6 +446,203 @@ const BOOK_VERBS = [
   { es: "explicar", ru: "объяснять" },
 ];
 
+/* Школьная повседневность — слова и фразы, сгруппированные по ситуациям */
+const SCHOOL = [
+  { id: "sec-school-people", icon: "👥", title: "Люди в школе", nav: "👥 Люди", items: [
+    { es: "el colegio / el cole", ru: "школа (разг. «школа»)" },
+    { es: "el instituto", ru: "средняя школа (с 12 лет)" },
+    { es: "el profesor / la profesora", ru: "учитель / учительница" },
+    { es: "el profe", ru: "училка, учитель (разг.)" },
+    { es: "el tutor / la tutora", ru: "классный руководитель" },
+    { es: "el director / la directora", ru: "директор" },
+    { es: "el jefe de estudios", ru: "завуч" },
+    { es: "el orientador", ru: "школьный психолог-консультант" },
+    { es: "el conserje", ru: "вахтёр, завхоз" },
+    { es: "el compañero / la compañera", ru: "одноклассник / одноклассница" },
+    { es: "la clase", ru: "класс (коллектив детей)" },
+    { es: "el curso", ru: "учебный год, класс (6.º curso)" },
+    { es: "el delegado / la delegada", ru: "староста" },
+    { es: "el AMPA", ru: "родительский комитет" },
+  ]},
+
+  { id: "sec-school-places", icon: "📍", title: "Места в школе", nav: "📍 Места", items: [
+    { es: "el aula", ru: "класс (кабинет)" },
+    { es: "el pasillo", ru: "коридор" },
+    { es: "el patio", ru: "двор" },
+    { es: "el comedor", ru: "столовая" },
+    { es: "el gimnasio", ru: "спортзал" },
+    { es: "la biblioteca", ru: "библиотека" },
+    { es: "el laboratorio", ru: "лаборатория" },
+    { es: "el aula de informática", ru: "компьютерный класс" },
+    { es: "la sala de profesores", ru: "учительская" },
+    { es: "la secretaría", ru: "канцелярия" },
+    { es: "la enfermería", ru: "медпункт" },
+    { es: "los aseos / los servicios", ru: "туалеты" },
+    { es: "la entrada / la salida", ru: "вход / выход" },
+    { es: "la taquilla", ru: "шкафчик" },
+  ]},
+
+  { id: "sec-school-subjects", icon: "📚", title: "Предметы", nav: "📚 Предметы", items: [
+    { es: "Lengua Castellana", ru: "испанский язык" },
+    { es: "Matemáticas", ru: "математика" },
+    { es: "Ciencias Naturales", ru: "природоведение" },
+    { es: "Ciencias Sociales", ru: "обществознание и география" },
+    { es: "Inglés", ru: "английский" },
+    { es: "Educación Física (EF)", ru: "физкультура" },
+    { es: "Educación Plástica", ru: "изобразительное искусство" },
+    { es: "Música", ru: "музыка" },
+    { es: "Religión / Valores", ru: "религия / этика" },
+    { es: "Tecnología", ru: "технология" },
+    { es: "la asignatura", ru: "учебный предмет" },
+    { es: "la optativa", ru: "предмет по выбору" },
+  ]},
+
+  { id: "sec-school-stuff", icon: "✏️", title: "Канцелярия и вещи", nav: "✏️ Вещи", items: [
+    { es: "el libro de texto", ru: "учебник" },
+    { es: "el cuadernillo", ru: "рабочая тетрадь" },
+    { es: "el cuaderno / la libreta", ru: "тетрадь" },
+    { es: "la agenda", ru: "дневник для записи заданий" },
+    { es: "la ficha", ru: "рабочий лист" },
+    { es: "la carpeta / el archivador", ru: "папка / скоросшиватель" },
+    { es: "la funda de plástico", ru: "файл" },
+    { es: "el bolígrafo / el boli", ru: "ручка" },
+    { es: "el lápiz", ru: "карандаш" },
+    { es: "los lápices de colores", ru: "цветные карандаши" },
+    { es: "los rotuladores", ru: "фломастеры" },
+    { es: "el subrayador", ru: "маркер-выделитель" },
+    { es: "el corrector / el típex", ru: "корректор, замазка" },
+    { es: "la goma (de borrar)", ru: "ластик" },
+    { es: "el sacapuntas", ru: "точилка" },
+    { es: "las tijeras", ru: "ножницы" },
+    { es: "el pegamento de barra", ru: "клей-карандаш" },
+    { es: "la grapadora", ru: "степлер" },
+    { es: "la regla", ru: "линейка" },
+    { es: "la escuadra y el cartabón", ru: "угольники" },
+    { es: "el compás", ru: "циркуль" },
+    { es: "el transportador", ru: "транспортир" },
+    { es: "la calculadora", ru: "калькулятор" },
+    { es: "el estuche", ru: "пенал" },
+    { es: "la mochila", ru: "рюкзак" },
+    { es: "el pupitre", ru: "парта" },
+    { es: "la pizarra", ru: "доска" },
+    { es: "el forro", ru: "обложка для учебника" },
+    { es: "la etiqueta", ru: "наклейка с именем" },
+    { es: "el chándal", ru: "спортивный костюм" },
+    { es: "el bocadillo", ru: "бутерброд на перекус" },
+    { es: "la fiambrera / el tupper", ru: "контейнер для еды" },
+    { es: "la botella de agua", ru: "бутылка воды" },
+  ]},
+
+  { id: "sec-school-process", icon: "🕐", title: "Учебный процесс", nav: "🕐 Процесс",
+    note: "Шкала оценок от высшей к низшей: <b>sobresaliente</b> — <b>notable</b> — <b>bien</b> — <b>suficiente</b> — <b>insuficiente</b>.",
+    items: [
+    { es: "la clase", ru: "урок" },
+    { es: "el horario", ru: "расписание" },
+    { es: "el recreo", ru: "перемена" },
+    { es: "la hora / la sesión", ru: "урок как отрезок времени" },
+    { es: "el timbre", ru: "звонок" },
+    { es: "pasar lista", ru: "проверять присутствующих" },
+    { es: "la falta (de asistencia)", ru: "пропуск, отсутствие" },
+    { es: "el justificante", ru: "справка, объяснительная" },
+    { es: "el retraso", ru: "опоздание" },
+    { es: "los deberes / las tareas", ru: "домашнее задание" },
+    { es: "el examen / la prueba", ru: "контрольная работа" },
+    { es: "el dictado", ru: "диктант" },
+    { es: "la lectura", ru: "чтение" },
+    { es: "el resumen", ru: "краткий пересказ" },
+    { es: "la exposición", ru: "устный доклад" },
+    { es: "el trabajo en grupo", ru: "работа в группе" },
+    { es: "el proyecto", ru: "проект" },
+    { es: "el mural", ru: "стенгазета, плакат" },
+    { es: "la excursión / la salida", ru: "экскурсия" },
+    { es: "las extraescolares", ru: "кружки, доп. занятия" },
+    { es: "corregir", ru: "проверять, исправлять" },
+    { es: "entregar", ru: "сдать работу" },
+    { es: "repasar", ru: "повторять" },
+    { es: "estudiar", ru: "учить" },
+    { es: "la evaluación", ru: "оценивание, четверть" },
+    { es: "el trimestre", ru: "триместр" },
+    { es: "el boletín de notas", ru: "табель с оценками" },
+    { es: "la nota", ru: "оценка" },
+    { es: "aprobar / suspender", ru: "сдать / не сдать" },
+    { es: "repetir curso", ru: "остаться на второй год" },
+    { es: "la falta de ortografía", ru: "орфографическая ошибка" },
+    { es: "el refuerzo / el apoyo", ru: "дополнительные занятия" },
+  ]},
+
+  { id: "sec-school-teacher", icon: "🗣️", title: "Что говорит учитель", nav: "🗣️ Учитель",
+    note: "💡 Учитель говорит классу на <b>vosotros</b>, поэтому окончания непривычные: <b>-ad</b>, <b>-ed</b>, <b>-id</b>. Эти фразы важно узнавать на слух.",
+    pairs: [
+    { es: "Sacad el libro.", ru: "Достаньте учебник." },
+    { es: "Abrid el libro por la página 24.", ru: "Откройте книгу на странице 24." },
+    { es: "Poned la fecha.", ru: "Напишите дату." },
+    { es: "Copiad el enunciado.", ru: "Перепишите условие." },
+    { es: "Levantad la mano.", ru: "Поднимите руку." },
+    { es: "En silencio, por favor.", ru: "Тишина, пожалуйста." },
+    { es: "Corregimos.", ru: "Проверяем." },
+    { es: "Salid a la pizarra.", ru: "Выходите к доске." },
+    { es: "Haced parejas / grupos de cuatro.", ru: "Разбейтесь по парам / по четверо." },
+    { es: "Entregad las fichas.", ru: "Сдайте листы." },
+    { es: "Para mañana…", ru: "На завтра…" },
+    { es: "Esto entra en el examen.", ru: "Это будет в контрольной." },
+    { es: "Guardad las cosas.", ru: "Убирайте вещи." },
+    { es: "Recoged.", ru: "Приберитесь." },
+    { es: "Poneos en fila.", ru: "Встаньте в ряд." },
+    { es: "Escuchad con atención.", ru: "Слушайте внимательно." },
+    { es: "¿Alguna duda?", ru: "Есть вопросы?" },
+  ]},
+
+  { id: "sec-school-say", icon: "💬", title: "Что сказать самой", nav: "💬 Фразы",
+    note: "💡 Начни с первых двух групп. Не понять слово на уроке — это нормально; главное — уметь переспросить. Бери по 5 фраз за раз.",
+    subs: [
+      { head: "Когда не поняла", pairs: [
+        { es: "No lo he entendido.", ru: "Я не поняла." },
+        { es: "¿Puede repetir, por favor?", ru: "Можете повторить?" },
+        { es: "¿Puede hablar más despacio, por favor?", ru: "Можете говорить помедленнее?" },
+        { es: "¿Me lo puede explicar otra vez?", ru: "Можете объяснить ещё раз?" },
+        { es: "Perdón, ¿qué ha dicho?", ru: "Извините, что вы сказали?" },
+        { es: "¿Qué significa «…»?", ru: "Что значит «…»?" },
+        { es: "¿Cómo se dice «…» en español?", ru: "Как сказать «…» по-испански?" },
+        { es: "¿Cómo se escribe?", ru: "Как это пишется?" },
+      ]},
+      { head: "Про задание", pairs: [
+        { es: "¿Qué hay que hacer?", ru: "Что нужно сделать?" },
+        { es: "¿En qué página estamos?", ru: "На какой мы странице?" },
+        { es: "¿Lo hacemos en el cuaderno o en la ficha?", ru: "Делать в тетради или на листе?" },
+        { es: "¿Hay que copiar el enunciado?", ru: "Условие переписывать?" },
+        { es: "¿Para cuándo es?", ru: "К какому числу?" },
+        { es: "¿Esto entra en el examen?", ru: "Это будет в контрольной?" },
+        { es: "¿Lo he hecho bien?", ru: "Я правильно сделала?" },
+        { es: "He terminado.", ru: "Я закончила." },
+        { es: "Todavía no he terminado.", ru: "Я ещё не закончила." },
+        { es: "Necesito un poco más de tiempo.", ru: "Мне нужно ещё немного времени." },
+      ]},
+      { head: "Когда что-то случилось", pairs: [
+        { es: "Se me ha olvidado el libro en casa.", ru: "Я забыла учебник дома." },
+        { es: "No he traído la ficha.", ru: "Я не принесла лист." },
+        { es: "No he podido hacer los deberes.", ru: "Я не смогла сделать домашнее задание." },
+        { es: "He perdido mi cuaderno.", ru: "Я потеряла тетрадь." },
+        { es: "Se me ha roto el lápiz.", ru: "У меня сломался карандаш." },
+        { es: "¿Me dejas un boli?", ru: "Дашь ручку?" },
+        { es: "¿Puedo ir al baño?", ru: "Можно выйти в туалет?" },
+        { es: "¿Puedo beber agua?", ru: "Можно попить?" },
+        { es: "Me encuentro mal.", ru: "Мне нехорошо." },
+        { es: "Me duele la cabeza / la barriga.", ru: "У меня болит голова / живот." },
+        { es: "¿Puedo ir a la enfermería?", ru: "Можно в медпункт?" },
+      ]},
+      { head: "С одноклассниками", pairs: [
+        { es: "¿Qué toca ahora?", ru: "Какой сейчас урок?" },
+        { es: "¿Qué hay de deberes?", ru: "Что задали?" },
+        { es: "¿Me dejas sitio?", ru: "Подвинешься?" },
+        { es: "¿Juego con vosotros?", ru: "Можно с вами поиграть?" },
+        { es: "¿Me lo explicas?", ru: "Объяснишь мне?" },
+        { es: "Te toca a ti.", ru: "Твоя очередь." },
+        { es: "Espérame.", ru: "Подожди меня." },
+        { es: "¿Vienes al patio?", ru: "Пойдёшь во двор?" },
+      ]},
+  ]},
+];
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -497,6 +694,7 @@ function render() {
   if (state.view === "landing") return renderLanding();
   if (state.view === "home") return renderHome();
   if (state.view === "book") return renderBook();
+  if (state.view === "school") return renderSchool();
   if (state.view === "topic") return renderTopic();
   if (state.view === "words") return renderWords();
   if (state.view === "verbs") return renderVerbs();
@@ -529,6 +727,14 @@ function renderLanding() {
       <div>
         <div class="label-big">📗 Book</div>
         <div class="label-sub">Слова и глаголы из бумажного учебника</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="topic-card" onclick="goSchool()">
+      <div>
+        <div class="label-big">🏫 Colegio</div>
+        <div class="label-sub">Школьные слова и фразы по группам</div>
       </div>
       <div class="arrow">→</div>
     </div>
@@ -615,6 +821,47 @@ function renderBook() {
         ${BOOK_VERBS.map(v => `<div class="mat-row-inline"><span class="es">${v.es}</span><span class="ru">${v.ru}</span></div>`).join("")}
       </div>
     </div>
+  `;
+}
+
+function goSchool() {
+  state.view = "school";
+  render();
+}
+
+function schoolRows(g) {
+  if (g.items) {
+    return g.items.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("");
+  }
+  if (g.pairs) {
+    return g.pairs.map(w => `<div class="mat-row-pair">${w.es} <span class="ru">— ${w.ru}</span></div>`).join("");
+  }
+  if (g.subs) {
+    return g.subs.map(s => `
+      <div class="mat-subhead">${s.head}</div>
+      ${s.pairs.map(w => `<div class="mat-row-pair">${w.es} <span class="ru">— ${w.ru}</span></div>`).join("")}
+    `).join("");
+  }
+  return "";
+}
+
+function renderSchool() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goLanding()">← Home</button>
+    <div class="eyebrow">Aprender Español</div>
+    <div class="page-title" style="margin-bottom:6px;">🏫 Colegio</div>
+    <div class="label-sub" style="margin-bottom:18px;">Школьная повседневность — слова и фразы по группам</div>
+
+    <div class="mat-nav">
+      ${SCHOOL.map(g => `<button onclick="scrollToSection('${g.id}')">${g.nav}</button>`).join("")}
+    </div>
+
+    ${SCHOOL.map(g => `
+      <div class="mat-section" id="${g.id}">
+        <div class="mat-header"><span class="icon">${g.icon}</span><span class="title">${g.title}</span></div>
+        <div class="mat-card">${schoolRows(g)}</div>
+        ${g.note ? `<div class="mat-note">${g.note}</div>` : ""}
+      </div>`).join("")}
   `;
 }
 
