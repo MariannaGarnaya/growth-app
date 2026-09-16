@@ -685,6 +685,14 @@ let state = {
   aDeck: [], aIndex: 0, aRevealed: false, aKnown: [], aUnknown: [], aFinished: false,
   // pronouns test
   pDeck: [], pIndex: 0, pRevealed: false, pKnown: [], pUnknown: [], pFinished: false,
+
+  // ── Animales del mundo (доп. тема репетитора) ──
+  azDeck: [], azIndex: 0, azRevealed: false, azKnown: [], azUnknown: [], azFinished: false,
+  aaDeck: [], aaIndex: 0, aaRevealed: false, aaKnown: [], aaUnknown: [], aaFinished: false,
+  avDeck: [], avIndex: 0, avRevealed: false, avKnown: [], avUnknown: [], avFinished: false,
+  aqDeck: [], aqIndex: 0, aqSelected: null, aqScore: 0, aqWrong: [], aqFinished: false,
+  adIndex: 0, adRevealed: false, adDone: false,
+  aeIndex: 0, aeRevealed: false, aeDone: false,
 };
 
 const app = document.getElementById("app");
@@ -704,6 +712,14 @@ function render() {
   if (state.view === "print") return renderPrint();
   if (state.view === "dialog") return renderDialog();
   if (state.view === "examples") return renderExamples();
+  if (state.view === "aztopic") return renderAnimalsTopic();
+  if (state.view === "azwords") return renderAnimalsWords();
+  if (state.view === "azadj") return renderAnimalsAdj();
+  if (state.view === "azverbs") return renderAnimalsVerbs();
+  if (state.view === "azquiz") return renderAnimalsQuiz();
+  if (state.view === "azdialog") return renderAnimalsDialog();
+  if (state.view === "azexamples") return renderAnimalsExamples();
+  if (state.view === "azprint") return renderAnimalsPrint();
 }
 
 /* ═══════════════ ГЛАВНАЯ ═══════════════ */
@@ -788,6 +804,16 @@ function renderHome() {
     <div class="soon-card"><div><div class="label-big">19. Aprender a aprender</div><div class="label-sub">учиться самостоятельно</div></div><span class="soon-badge">скоро</span></div>
     <div class="soon-card"><div><div class="label-big">20. La ciudad y el transporte</div><div class="label-sub">город и транспорт</div></div><span class="soon-badge">скоро</span></div>
     <div class="soon-card"><div><div class="label-big">21. Las profesiones y mi futuro</div><div class="label-sub">профессии и будущее</div></div><span class="soon-badge">скоро</span></div>
+
+    <div class="block-header">Дополнительно (материалы репетитора)</div>
+    <div class="topic-card" onclick="goAnimalsTopic()">
+      <div>
+        <div class="label-small">Тема репетитора</div>
+        <div class="label-big">🦁 Animales del mundo</div>
+        <div class="label-sub">Животные мира</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
   `;
 }
 
@@ -1712,6 +1738,714 @@ function nextExample() {
     state.eDone = true;
     render();
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ТЕМА (доп.): ANIMALES DEL MUNDO — материалы репетитора
+   ══════════════════════════════════════════════════════════════ */
+
+const ANIMALS = [
+  { es: "el león", ru: "лев", emoji: "🦁" },
+  { es: "el tigre", ru: "тигр", emoji: "🐯" },
+  { es: "el elefante", ru: "слон", emoji: "🐘" },
+  { es: "el camello", ru: "верблюд", emoji: "🐪" },
+  { es: "la jirafa", ru: "жираф", emoji: "🦒" },
+  { es: "el delfín", ru: "дельфин", emoji: "🐬" },
+  { es: "la ballena", ru: "кит", emoji: "🐳" },
+  { es: "la ardilla", ru: "белка", emoji: "🐿️" },
+  { es: "la cigüeña", ru: "аист", emoji: "🐦" },
+  { es: "el cocodrilo", ru: "крокодил", emoji: "🐊" },
+  { es: "el pingüino", ru: "пингвин", emoji: "🐧" },
+  { es: "el lince ibérico", ru: "иберийская рысь", emoji: "🐆" },
+  { es: "el conejo", ru: "кролик", emoji: "🐇" },
+];
+
+const ANIMAL_BODY = [
+  { es: "la trompa", ru: "хобот" },
+  { es: "los colmillos", ru: "клыки / бивни" },
+  { es: "el pico", ru: "клюв" },
+  { es: "las plumas", ru: "перья" },
+  { es: "las alas", ru: "крылья" },
+  { es: "la melena", ru: "грива" },
+  { es: "la cola", ru: "хвост" },
+  { es: "las aletas", ru: "плавники" },
+  { es: "la joroba", ru: "горб" },
+  { es: "las rayas", ru: "полоски" },
+  { es: "las patas", ru: "лапы" },
+  { es: "los dientes afilados", ru: "острые зубы" },
+  { es: "las manchas", ru: "пятна" },
+  { es: "la madriguera", ru: "нора" },
+];
+
+const ANIMAL_ADJ = [
+  { es: "grande", ru: "большой", antEs: "pequeño/-a", antRu: "маленький" },
+  { es: "rápido/-a", ru: "быстрый", antEs: "lento/-a", antRu: "медленный" },
+  { es: "fuerte", ru: "сильный", antEs: "débil", antRu: "слабый" },
+  { es: "alto/-a", ru: "высокий", antEs: "bajo/-a", antRu: "низкий" },
+  { es: "largo/-a", ru: "длинный", antEs: "corto/-a", antRu: "короткий" },
+];
+
+const ANIMAL_VERBS = [
+  { inf: "andando", tr: "идёт (пешком)", ex: "El camello está andando por el desierto." },
+  { inf: "nadando", tr: "плывёт", ex: "La ballena está nadando en el mar." },
+  { inf: "corriendo", tr: "бежит", ex: "El tigre está corriendo en la selva." },
+  { inf: "comiendo", tr: "ест", ex: "El elefante está comiendo hojas." },
+  { inf: "bebiendo", tr: "пьёт", ex: "La jirafa está bebiendo agua." },
+  { inf: "saltando", tr: "прыгает", ex: "Los delfines están saltando." },
+  { inf: "volando", tr: "летит", ex: "La cigüeña está volando muy alto." },
+];
+
+const ANIMAL_QUESTIONS = [
+  { sentence: "¿Qué animal tiene trompa y colmillos? Es el ___.", options: ["elefante", "jirafa", "tigre"], answer: "elefante" },
+  { sentence: "¿Qué animal tiene pico, plumas y alas? Es la ___.", options: ["cigüeña", "ballena", "ardilla"], answer: "cigüeña" },
+  { sentence: "El elefante está ___ hojas.", options: ["comiendo", "corriendo", "bebiendo"], answer: "comiendo" },
+  { sentence: "Los delfines están ___ y saltando.", options: ["nadando", "andando", "volando"], answer: "nadando" },
+  { sentence: "El león tiene una ___ grande.", options: ["melena", "cola", "pico"], answer: "melena" },
+  { sentence: "El tigre es grande y tiene ___.", options: ["rayas", "plumas", "joroba"], answer: "rayas" },
+  { sentence: "La ardilla es pequeña y ___.", options: ["débil", "fuerte", "alta"], answer: "débil" },
+  { sentence: "El camello tiene ___ para guardar agua.", options: ["joroba", "aletas", "colmillos"], answer: "joroba" },
+  { sentence: "El cocodrilo tiene los dientes muy ___.", options: ["afilados", "fuertes", "largos"], answer: "afilados" },
+  { sentence: "El pingüino no vuela, pero ___ muy bien.", options: ["nada", "corre", "salta"], answer: "nada" },
+];
+
+const ANIMAL_DIALOGUE = [
+  { speaker: "Sara", cls: "ana", es: "¿Jugamos a adivinar animales?", ru: "Поиграем в угадай животное?" },
+  { speaker: "Nico", cls: "pablo", es: "¡Vale! Es grande, tiene rayas y empieza por T.", ru: "Ладно! Он большой, полосатый и начинается на Т." },
+  { speaker: "Sara", cls: "ana", es: "¡El tigre!", ru: "Тигр!" },
+  { speaker: "Nico", cls: "pablo", es: "¡Bien! Ahora tú: es pequeña, de color marrón, tiene cola y empieza por A.", ru: "Отлично! Теперь ты: маленькая, коричневая, с хвостом, начинается на А." },
+  { speaker: "Sara", cls: "ana", es: "¡La ardilla!", ru: "Белка!" },
+  { speaker: "Nico", cls: "pablo", es: "¿Qué está haciendo el cocodrilo en la foto?", ru: "Что делает крокодил на фото?" },
+  { speaker: "Sara", cls: "ana", es: "Está comiendo. Tiene los dientes muy afilados.", ru: "Он ест. У него очень острые зубы." },
+  { speaker: "Nico", cls: "pablo", es: "¿Y qué están haciendo las cigüeñas?", ru: "А что делают аисты?" },
+  { speaker: "Sara", cls: "ana", es: "Están volando muy alto.", ru: "Они летят очень высоко." },
+  { speaker: "Nico", cls: "pablo", es: "¿Te gusta el delfín?", ru: "Тебе нравится дельфин?" },
+  { speaker: "Sara", cls: "ana", es: "Sí, me gusta porque es rápido y gracioso.", ru: "Да, нравится, потому что он быстрый и забавный." },
+  { speaker: "Nico", cls: "pablo", es: "¿Te gusta la ardilla?", ru: "Тебе нравится белка?" },
+  { speaker: "Sara", cls: "ana", es: "No me gusta porque es débil. Me gusta más el león porque es fuerte.", ru: "Нет, не нравится, потому что она слабая. Мне больше нравится лев, потому что он сильный." },
+  { speaker: "Nico", cls: "pablo", es: "¡A mí también me gusta el león! Tiene una melena enorme.", ru: "Мне тоже нравится лев! У него огромная грива." },
+];
+const ANIMAL_DIALOGUE_CHUNKS = chunkDialogue(ANIMAL_DIALOGUE, 5);
+
+const ANIMAL_EXAMPLES = [
+  { es: "El elefante es muy grande y está comiendo hojas.", ru: "Слон очень большой и ест листья." },
+  { es: "El león tiene una melena grande y es muy fuerte.", ru: "У льва большая грива, и он очень сильный." },
+  { es: "Los delfines están nadando y saltando en el mar.", ru: "Дельфины плавают и прыгают в море." },
+  { es: "La cigüeña tiene un pico largo y las alas blancas y negras.", ru: "У аиста длинный клюв и чёрно-белые крылья." },
+  { es: "El cocodrilo tiene los dientes muy afilados.", ru: "У крокодила очень острые зубы." },
+  { es: "Me gusta mucho el zoo porque hay animales grandes, pequeños, rápidos y lentos.", ru: "Мне очень нравится зоопарк, потому что там есть большие, маленькие, быстрые и медленные животные." },
+];
+
+/* ─── экран темы ─── */
+
+function goAnimalsTopic() { state.view = "aztopic"; render(); }
+
+function renderAnimalsTopic() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goHome()">← Все темы</button>
+    <div class="eyebrow">Тема репетитора</div>
+    <div class="topic-title-row">
+      <div class="page-title" style="margin-bottom:0;">🦁 Animales del mundo</div>
+      <button class="print-icon-btn" onclick="goAnimalsPrint()" title="Материалы">📖</button>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsWords()">
+      <div>
+        <div class="label-big">🦒 Существительные</div>
+        <div class="label-sub">13 животных — тест «знаю / не знаю»</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsAdj()">
+      <div>
+        <div class="label-big">🙂 Прилагательные</div>
+        <div class="label-sub">5 пар с антонимами — большой/маленький и т.д.</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsVerbs()">
+      <div>
+        <div class="label-big">🏃 Глаголы (estar + gerundio)</div>
+        <div class="label-sub">7 глаголов — что животное делает сейчас</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsQuiz()">
+      <div>
+        <div class="label-big">🟣 Тест: предложения</div>
+        <div class="label-sub">10 вопросов — слова и глаголы вместе</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsDialog()">
+      <div>
+        <div class="label-big">💬 Диалог</div>
+        <div class="label-sub">14 реплик — переверни карточку, узнай перевод</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goAnimalsExamples()">
+      <div>
+        <div class="label-big">📚 Примеры</div>
+        <div class="label-sub">6 предложений из текста «El zoo de mi barrio»</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+/* ─── существительные (животные, с эмодзи) ─── */
+
+function goAnimalsWords() {
+  state.view = "azwords";
+  state.azDeck = shuffle(ANIMALS);
+  state.azIndex = 0;
+  state.azRevealed = false;
+  state.azKnown = [];
+  state.azUnknown = [];
+  state.azFinished = false;
+  render();
+}
+
+function renderAnimalsWords() {
+  const total = state.azDeck.length;
+  const progressDone = state.azKnown.length + state.azUnknown.length;
+
+  if (state.azFinished) {
+    const allKnown = state.azUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Существительные</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.azKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.azUnknown.map(w => `<div class="chip">${w.es} — ${w.ru}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewAnimalsWords()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goAnimalsWords()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.azDeck[state.azIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Animales · Существительные</div>
+
+    <div class="progress-dots">
+      ${state.azDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.azRevealed ? '' : 'revealAnimalsWord()'}" style="cursor:${state.azRevealed ? 'default' : 'pointer'}">
+      <div style="font-size:44px; line-height:1; margin-bottom:8px;">${current.emoji}</div>
+      <div class="flash-word">${current.es}</div>
+      ${state.azRevealed
+        ? `<div class="flash-tr">${current.ru}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.azRevealed ? 'active' : ''}" onclick="${state.azRevealed ? 'answerAnimalsWord(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.azRevealed ? 'active' : ''}" onclick="${state.azRevealed ? 'answerAnimalsWord(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealAnimalsWord() { state.azRevealed = true; render(); }
+
+function answerAnimalsWord(isKnown) {
+  const current = state.azDeck[state.azIndex];
+  if (isKnown) state.azKnown.push(current); else state.azUnknown.push(current);
+  if (state.azIndex + 1 < state.azDeck.length) {
+    state.azIndex++;
+    state.azRevealed = false;
+  } else {
+    state.azFinished = true;
+  }
+  render();
+}
+
+function reviewAnimalsWords() {
+  state.azDeck = shuffle(state.azUnknown);
+  state.azKnown = [];
+  state.azUnknown = [];
+  state.azIndex = 0;
+  state.azRevealed = false;
+  state.azFinished = false;
+  render();
+}
+
+/* ─── прилагательные (с антонимами) ─── */
+
+function goAnimalsAdj() {
+  state.view = "azadj";
+  state.aaDeck = shuffle(ANIMAL_ADJ);
+  state.aaIndex = 0;
+  state.aaRevealed = false;
+  state.aaKnown = [];
+  state.aaUnknown = [];
+  state.aaFinished = false;
+  render();
+}
+
+function renderAnimalsAdj() {
+  const total = state.aaDeck.length;
+  const progressDone = state.aaKnown.length + state.aaUnknown.length;
+
+  if (state.aaFinished) {
+    const allKnown = state.aaUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Прилагательные</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🙂"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.aaKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.aaUnknown.map(w => `<div class="chip">${w.es} — ${w.ru}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewAnimalsAdj()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goAnimalsAdj()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.aaDeck[state.aaIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Animales · Прилагательные</div>
+
+    <div class="progress-dots">
+      ${state.aaDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.aaRevealed ? '' : 'revealAnimalsAdj()'}" style="cursor:${state.aaRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.es}</div>
+      ${state.aaRevealed
+        ? `<div class="flash-tr">${current.ru}</div><div style="font-size:13px; color:#4b5563; margin-top:2px;">≠ <b style="color:#6d28d9;">${current.antEs}</b> — ${current.antRu}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод и антоним</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.aaRevealed ? 'active' : ''}" onclick="${state.aaRevealed ? 'answerAnimalsAdj(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.aaRevealed ? 'active' : ''}" onclick="${state.aaRevealed ? 'answerAnimalsAdj(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealAnimalsAdj() { state.aaRevealed = true; render(); }
+
+function answerAnimalsAdj(isKnown) {
+  const current = state.aaDeck[state.aaIndex];
+  if (isKnown) state.aaKnown.push(current); else state.aaUnknown.push(current);
+  if (state.aaIndex + 1 < state.aaDeck.length) {
+    state.aaIndex++;
+    state.aaRevealed = false;
+  } else {
+    state.aaFinished = true;
+  }
+  render();
+}
+
+function reviewAnimalsAdj() {
+  state.aaDeck = shuffle(state.aaUnknown);
+  state.aaKnown = [];
+  state.aaUnknown = [];
+  state.aaIndex = 0;
+  state.aaRevealed = false;
+  state.aaFinished = false;
+  render();
+}
+
+/* ─── глаголы (estar + gerundio) ─── */
+
+function goAnimalsVerbs() {
+  state.view = "azverbs";
+  state.avDeck = shuffle(ANIMAL_VERBS);
+  state.avIndex = 0;
+  state.avRevealed = false;
+  state.avKnown = [];
+  state.avUnknown = [];
+  state.avFinished = false;
+  render();
+}
+
+function renderAnimalsVerbs() {
+  const total = state.avDeck.length;
+  const progressDone = state.avKnown.length + state.avUnknown.length;
+
+  if (state.avFinished) {
+    const allKnown = state.avUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Глаголы</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все глаголы выучены!" : `Знаешь ${state.avKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.avUnknown.map(w => `<div class="chip">${w.inf} — ${w.tr}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewAnimalsVerbs()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goAnimalsVerbs()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.avDeck[state.avIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Animales · Глаголы</div>
+
+    <div class="progress-dots">
+      ${state.avDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.avRevealed ? '' : 'revealAnimalsVerb()'}" style="cursor:${state.avRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.inf}</div>
+      ${state.avRevealed
+        ? `<div class="flash-tr">${current.tr}</div><div class="stage-line" style="margin-top:8px; text-align:center;">${current.ex}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод и пример</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.avRevealed ? 'active' : ''}" onclick="${state.avRevealed ? 'answerAnimalsVerb(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.avRevealed ? 'active' : ''}" onclick="${state.avRevealed ? 'answerAnimalsVerb(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealAnimalsVerb() { state.avRevealed = true; render(); }
+
+function answerAnimalsVerb(isKnown) {
+  const current = state.avDeck[state.avIndex];
+  if (isKnown) state.avKnown.push(current); else state.avUnknown.push(current);
+  if (state.avIndex + 1 < state.avDeck.length) {
+    state.avIndex++;
+    state.avRevealed = false;
+  } else {
+    state.avFinished = true;
+  }
+  render();
+}
+
+function reviewAnimalsVerbs() {
+  state.avDeck = shuffle(state.avUnknown);
+  state.avKnown = [];
+  state.avUnknown = [];
+  state.avIndex = 0;
+  state.avRevealed = false;
+  state.avFinished = false;
+  render();
+}
+
+/* ─── тест: предложения ─── */
+
+function goAnimalsQuiz() {
+  state.view = "azquiz";
+  state.aqDeck = shuffle(ANIMAL_QUESTIONS).map(q => ({ ...q, shuffledOptions: shuffle(q.options) }));
+  state.aqIndex = 0;
+  state.aqSelected = null;
+  state.aqScore = 0;
+  state.aqWrong = [];
+  state.aqFinished = false;
+  render();
+}
+
+function renderAnimalsQuiz() {
+  const total = state.aqDeck.length;
+
+  if (state.aqFinished) {
+    const allCorrect = state.aqWrong.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Тест</div>
+      <div class="result-box">
+        <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allCorrect ? `Все ${total} правильно!` : `Правильно: ${state.aqScore} из ${total}`}</div>
+        ${!allCorrect ? `<div class="chip-list">${state.aqWrong.map(w => `<div class="chip">${w.sentence.replace("___", w.answer)}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          <button class="btn-primary" onclick="goAnimalsQuiz()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const q = state.aqDeck[state.aqIndex];
+  const answered = state.aqSelected !== null;
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Animales · Тест</div>
+
+    <div class="progress-dots">
+      ${state.aqDeck.map((_, i) => `<div style="background:${i < state.aqIndex ? '#a855f7' : i === state.aqIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" style="cursor:default; min-height:auto;">
+      <div class="quiz-sentence">${q.sentence.replace("___", '<span class="blank">___</span>')}</div>
+
+      <div class="quiz-options">
+        ${q.shuffledOptions.map(opt => {
+          let cls = "option-btn";
+          if (answered) {
+            cls += " disabled";
+            if (opt === q.answer) cls += " correct";
+            else if (opt === state.aqSelected) cls += " wrong";
+          }
+          return `<button class="${cls}" onclick="${answered ? '' : `selectAnimalsQuizAnswer('${opt}')`}">${opt}</button>`;
+        }).join("")}
+      </div>
+
+      ${answered ? `<button class="next-btn" onclick="nextAnimalsQuizQuestion()">${state.aqIndex + 1 < total ? 'Дальше →' : 'Результаты →'}</button>` : ""}
+    </div>
+
+    <div class="counter">${state.aqIndex + 1} из ${total}</div>
+  `;
+}
+
+function selectAnimalsQuizAnswer(opt) {
+  state.aqSelected = opt;
+  const q = state.aqDeck[state.aqIndex];
+  if (opt === q.answer) {
+    state.aqScore++;
+  } else {
+    state.aqWrong.push(q);
+  }
+  render();
+}
+
+function nextAnimalsQuizQuestion() {
+  if (state.aqIndex + 1 < state.aqDeck.length) {
+    state.aqIndex++;
+    state.aqSelected = null;
+    render();
+  } else {
+    state.aqFinished = true;
+    render();
+  }
+}
+
+/* ─── диалог ─── */
+
+function goAnimalsDialog() {
+  state.view = "azdialog";
+  state.adIndex = 0;
+  state.adRevealed = false;
+  state.adDone = false;
+  render();
+}
+
+function renderAnimalsDialog() {
+  const total = ANIMAL_DIALOGUE_CHUNKS.length;
+
+  if (state.adDone) {
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Диалог</div>
+      <div class="result-box">
+        <div class="result-emoji">🌟</div>
+        <div class="result-title">Весь диалог пройден!</div>
+        <div class="result-sub">Sara и Nico поговорили о животных — 14 реплик</div>
+        <button class="btn-primary" style="width:100%;" onclick="goAnimalsDialog()">Начать заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const chunk = ANIMAL_DIALOGUE_CHUNKS[state.adIndex];
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Animales · Диалог</div>
+    <div class="page-title" style="font-size:18px; margin-bottom:14px;">Карточка ${state.adIndex + 1} из ${total}</div>
+
+    <div class="progress-dots">
+      ${ANIMAL_DIALOGUE_CHUNKS.map((_, i) => `<div style="background:${i < state.adIndex ? '#a855f7' : i === state.adIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.adRevealed ? '' : 'revealAnimalsDialogLine()'}" style="cursor:${state.adRevealed ? 'default' : 'pointer'}; align-items:flex-start; min-height:auto;">
+      ${chunk.map(line => `
+        <div class="dchunk-line">
+          <span class="dialog-speaker ${line.cls}">${line.speaker}</span>
+          <div class="dchunk-es">${line.es}</div>
+          ${state.adRevealed ? `<div class="dchunk-ru">${line.ru}</div>` : ""}
+        </div>
+      `).join("")}
+      ${!state.adRevealed ? `<div class="flash-hint" style="width:100%; text-align:center; margin-top:6px;">нажми, чтобы увидеть перевод</div>` : ""}
+    </div>
+
+    ${state.adRevealed ? `<button class="next-btn" onclick="nextAnimalsDialogLine()">${state.adIndex + 1 < total ? 'Дальше →' : 'Готово →'}</button>` : ""}
+
+    <div class="counter">${state.adIndex + 1} из ${total}</div>
+  `;
+}
+
+function revealAnimalsDialogLine() {
+  state.adRevealed = true;
+  render();
+}
+
+function nextAnimalsDialogLine() {
+  if (state.adIndex + 1 < ANIMAL_DIALOGUE_CHUNKS.length) {
+    state.adIndex++;
+    state.adRevealed = false;
+    render();
+  } else {
+    state.adDone = true;
+    render();
+  }
+}
+
+/* ─── примеры ─── */
+
+function goAnimalsExamples() {
+  state.view = "azexamples";
+  state.aeIndex = 0;
+  state.aeRevealed = false;
+  state.aeDone = false;
+  render();
+}
+
+function renderAnimalsExamples() {
+  const total = ANIMAL_EXAMPLES.length;
+
+  if (state.aeDone) {
+    app.innerHTML = `
+      <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Animales · Примеры</div>
+      <div class="result-box">
+        <div class="result-emoji">🌟</div>
+        <div class="result-title">Все ${total} предложений пройдены!</div>
+        <button class="btn-primary" style="width:100%;" onclick="goAnimalsExamples()">Начать заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const s = ANIMAL_EXAMPLES[state.aeIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Animales · Примеры</div>
+    <div class="page-title" style="font-size:18px; margin-bottom:14px;">Предложение ${state.aeIndex + 1} из ${total}</div>
+
+    <div class="progress-dots">
+      ${ANIMAL_EXAMPLES.map((_, i) => `<div style="background:${i < state.aeIndex ? '#a855f7' : i === state.aeIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.aeRevealed ? '' : 'revealAnimalsExample()'}" style="cursor:${state.aeRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word" style="font-size:19px; line-height:1.4;">${s.es}</div>
+      ${state.aeRevealed
+        ? `<div class="dchunk-ru" style="font-size:15px; padding:8px 16px;">${s.ru}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть перевод</div>`}
+    </div>
+
+    ${state.aeRevealed ? `<button class="next-btn" onclick="nextAnimalsExample()">${state.aeIndex + 1 < total ? 'Дальше →' : 'Готово →'}</button>` : ""}
+
+    <div class="counter">${state.aeIndex + 1} из ${total}</div>
+  `;
+}
+
+function revealAnimalsExample() {
+  state.aeRevealed = true;
+  render();
+}
+
+function nextAnimalsExample() {
+  if (state.aeIndex + 1 < ANIMAL_EXAMPLES.length) {
+    state.aeIndex++;
+    state.aeRevealed = false;
+    render();
+  } else {
+    state.aeDone = true;
+    render();
+  }
+}
+
+/* ─── материалы (справочник) ─── */
+
+function goAnimalsPrint() { state.view = "azprint"; render(); }
+
+function renderAnimalsPrint() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goAnimalsTopic()">← Animales del mundo</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Animales del mundo</div>
+    <div class="page-title" style="margin-bottom:14px;">📖 Материалы</div>
+
+    <div class="mat-nav">
+      <button onclick="scrollToSection('sec-az-words')">🦒 Слова</button>
+      <button onclick="scrollToSection('sec-az-body')">🦴 Части тела</button>
+      <button onclick="scrollToSection('sec-az-adj')">🙂 Прилагательные</button>
+      <button onclick="scrollToSection('sec-az-verbs')">🏃 Глаголы</button>
+      <button onclick="scrollToSection('sec-az-dialog')">💬 Диалог</button>
+      <button onclick="scrollToSection('sec-az-examples')">📚 Примеры</button>
+    </div>
+
+    <div class="mat-section" id="sec-az-words">
+      <div class="mat-header"><span class="icon">🦒</span><span class="title">Слова — животные</span></div>
+      <div class="mat-card">
+        ${ANIMALS.map(w => `<div class="mat-row-inline"><span class="es">${w.emoji} ${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-az-body">
+      <div class="mat-header"><span class="icon">🦴</span><span class="title">Части тела / признаки</span></div>
+      <div class="mat-card">
+        ${ANIMAL_BODY.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-az-adj">
+      <div class="mat-header"><span class="icon">🙂</span><span class="title">Прилагательные</span></div>
+      <div class="mat-card">
+        ${ANIMAL_ADJ.map(a => `
+          <div class="mat-row-adj">
+            <b>${a.es}</b> <span class="tr">— ${a.ru}</span> ≠ <b>${a.antEs}</b> <span class="ant-tr">— ${a.antRu}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-az-verbs">
+      <div class="mat-header"><span class="icon">🏃</span><span class="title">Глаголы (estar + gerundio)</span></div>
+      <div class="mat-card">
+        ${ANIMAL_VERBS.map(v => `
+          <div class="mat-row-stacked">
+            <div class="main"><b>${v.inf}</b> — ${v.tr}</div>
+            <div class="sub">${v.ex}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-az-dialog">
+      <div class="mat-header"><span class="icon">💬</span><span class="title">Диалог</span></div>
+      <div class="mat-card">
+        ${ANIMAL_DIALOGUE.map(d => `
+          <div class="mat-row-pair">
+            <span class="speaker ${d.cls}">${d.speaker}:</span> ${d.es} <span class="ru">— ${d.ru}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-az-examples">
+      <div class="mat-header"><span class="icon">📚</span><span class="title">Примеры</span></div>
+      <div class="mat-card">
+        ${ANIMAL_EXAMPLES.map(s => `<div class="mat-row-pair">${s.es} <span class="ru">— ${s.ru}</span></div>`).join("")}
+      </div>
+    </div>
+  `;
 }
 
 render();
