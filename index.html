@@ -738,6 +738,7 @@ function render() {
   if (state.view === "azexamples") return renderAnimalsExamples();
   if (state.view === "azprint") return renderAnimalsPrint();
   if (state.view === "mates") return renderMates();
+  if (state.view === "numbersTopic") return renderNumbersTopic();
   if (state.view === "matesCards") return renderMatesCards();
   if (state.view === "matesQuiz") return renderMatesQuiz();
 }
@@ -895,9 +896,32 @@ function goMates() {
 function renderMates() {
   app.innerHTML = `
     <button class="back-btn" onclick="goLanding()">← Home</button>
-    <div class="eyebrow">Aprender Español</div>
-    <div class="page-title" style="margin-bottom:6px;">🔢 Mates</div>
-    <div class="label-sub" style="margin-bottom:18px;">Математика на испанском — числа и счёт</div>
+    <div class="eyebrow">Mates</div>
+    <div class="page-title">Темы</div>
+
+    <div class="topic-card" onclick="goNumbersTopic()">
+      <div>
+        <div class="label-small">Тема 1</div>
+        <div class="label-big">Números</div>
+        <div class="label-sub">Числа</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+/* --- Тема: Números (Числа) --- */
+
+function goNumbersTopic() {
+  state.view = "numbersTopic";
+  render();
+}
+
+function renderNumbersTopic() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goMates()">← Все темы</button>
+    <div class="eyebrow">Mates · Тема 1</div>
+    <div class="page-title" style="margin-bottom:14px;">Números</div>
 
     <div class="link-card" onclick="goMatesCards()">
       <div>
@@ -937,8 +961,8 @@ function renderMatesCards() {
   if (state.mFinished) {
     const allKnown = state.mUnknown.length === 0;
     app.innerHTML = `
-      <button class="back-btn" onclick="goMates()">← Mates</button>
-      <div class="eyebrow" style="margin-bottom:14px;">Mates · Числа 0–23</div>
+      <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · Числа 0–23</div>
       <div class="result-box">
         <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
         <div class="result-title">${allKnown ? "Все числа выучены!" : `Знаешь ${state.mKnown.length} из ${total}`}</div>
@@ -954,8 +978,8 @@ function renderMatesCards() {
 
   const current = state.mDeck[state.mIndex];
   app.innerHTML = `
-    <button class="back-btn" onclick="goMates()">← Mates</button>
-    <div class="eyebrow" style="margin-bottom:14px;">Mates · Числа 0–23</div>
+    <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · Числа 0–23</div>
 
     <div class="progress-dots">
       ${state.mDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
@@ -1023,8 +1047,8 @@ function renderMatesQuiz() {
   if (state.mqFinished) {
     const allCorrect = state.mqWrong.length === 0;
     app.innerHTML = `
-      <button class="back-btn" onclick="goMates()">← Mates</button>
-      <div class="eyebrow" style="margin-bottom:14px;">Mates · Тест</div>
+      <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · Тест</div>
       <div class="result-box">
         <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
         <div class="result-title">${allCorrect ? `Все ${total} правильно!` : `Правильно: ${state.mqScore} из ${total}`}</div>
@@ -1041,8 +1065,8 @@ function renderMatesQuiz() {
   const answered = state.mqSelected !== null;
 
   app.innerHTML = `
-    <button class="back-btn" onclick="goMates()">← Mates</button>
-    <div class="eyebrow" style="margin-bottom:14px;">Mates · Тест</div>
+    <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · Тест</div>
 
     <div class="progress-dots">
       ${state.mqDeck.map((_, i) => `<div style="background:${i < state.mqIndex ? '#a855f7' : i === state.mqIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
