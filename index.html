@@ -667,6 +667,19 @@ const QUESTIONS = [
   { sentence: "Mi tío ___ (cuidar) a sus hijos.", options: ["cuida", "cuido", "cuidan"], answer: "cuida" },
 ];
 
+/* ═══════════════ MATES — ЧИСЛА 0-23 ═══════════════ */
+
+const NUMBERS = [
+  { num: 0, es: "cero" }, { num: 1, es: "uno" }, { num: 2, es: "dos" },
+  { num: 3, es: "tres" }, { num: 4, es: "cuatro" }, { num: 5, es: "cinco" },
+  { num: 6, es: "seis" }, { num: 7, es: "siete" }, { num: 8, es: "ocho" },
+  { num: 9, es: "nueve" }, { num: 10, es: "diez" }, { num: 11, es: "once" },
+  { num: 12, es: "doce" }, { num: 13, es: "trece" }, { num: 14, es: "catorce" },
+  { num: 15, es: "quince" }, { num: 16, es: "dieciséis" }, { num: 17, es: "diecisiete" },
+  { num: 18, es: "dieciocho" }, { num: 19, es: "diecinueve" }, { num: 20, es: "veinte" },
+  { num: 21, es: "veintiuno" }, { num: 22, es: "veintidós" }, { num: 23, es: "veintitrés" },
+];
+
 /* ═══════════════ СОСТОЯНИЕ ═══════════════ */
 
 let state = {
@@ -693,6 +706,10 @@ let state = {
   aqDeck: [], aqIndex: 0, aqSelected: null, aqScore: 0, aqWrong: [], aqFinished: false,
   adIndex: 0, adRevealed: false, adDone: false,
   aeIndex: 0, aeRevealed: false, aeDone: false,
+
+  // ── Mates: числа 0-23 ──
+  mDeck: [], mIndex: 0, mRevealed: false, mKnown: [], mUnknown: [], mFinished: false,
+  mqDeck: [], mqIndex: 0, mqSelected: null, mqScore: 0, mqWrong: [], mqFinished: false,
 };
 
 const app = document.getElementById("app");
@@ -720,6 +737,9 @@ function render() {
   if (state.view === "azdialog") return renderAnimalsDialog();
   if (state.view === "azexamples") return renderAnimalsExamples();
   if (state.view === "azprint") return renderAnimalsPrint();
+  if (state.view === "mates") return renderMates();
+  if (state.view === "matesCards") return renderMatesCards();
+  if (state.view === "matesQuiz") return renderMatesQuiz();
 }
 
 /* ═══════════════ ГЛАВНАЯ ═══════════════ */
@@ -751,6 +771,14 @@ function renderLanding() {
       <div>
         <div class="label-big">🏫 Colegio</div>
         <div class="label-sub">Школьные слова и фразы по группам</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="topic-card" onclick="goMates()">
+      <div>
+        <div class="label-big">🔢 Mates</div>
+        <div class="label-sub">Математика на испанском</div>
       </div>
       <div class="arrow">→</div>
     </div>
@@ -855,6 +883,213 @@ function renderSchool() {
         ${g.note ? `<div class="mat-note">${g.note}</div>` : ""}
       </div>`).join("")}
   `;
+}
+
+/* ═══════════════ MATES ═══════════════ */
+
+function goMates() {
+  state.view = "mates";
+  render();
+}
+
+function renderMates() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goLanding()">← Home</button>
+    <div class="eyebrow">Aprender Español</div>
+    <div class="page-title" style="margin-bottom:6px;">🔢 Mates</div>
+    <div class="label-sub" style="margin-bottom:18px;">Математика на испанском — числа и счёт</div>
+
+    <div class="link-card" onclick="goMatesCards()">
+      <div>
+        <div class="label-big">🔟 Числа 0–23</div>
+        <div class="label-sub">Карточки — цифра → слово, тест «знаю / не знаю»</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goMatesQuiz()">
+      <div>
+        <div class="label-big">✏️ Тест: выбери число</div>
+        <div class="label-sub">По цифре выбери правильное испанское слово</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+/* --- Числа: карточки знаю/не знаю --- */
+
+function goMatesCards() {
+  state.view = "matesCards";
+  state.mDeck = shuffle(NUMBERS);
+  state.mIndex = 0;
+  state.mRevealed = false;
+  state.mKnown = [];
+  state.mUnknown = [];
+  state.mFinished = false;
+  render();
+}
+
+function renderMatesCards() {
+  const total = state.mDeck.length;
+  const progressDone = state.mKnown.length + state.mUnknown.length;
+
+  if (state.mFinished) {
+    const allKnown = state.mUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goMates()">← Mates</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mates · Числа 0–23</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все числа выучены!" : `Знаешь ${state.mKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.mUnknown.map(w => `<div class="chip">${w.num} — ${w.es}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewMatesCards()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goMatesCards()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.mDeck[state.mIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goMates()">← Mates</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mates · Числа 0–23</div>
+
+    <div class="progress-dots">
+      ${state.mDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.mRevealed ? '' : 'revealMatesCard()'}" style="cursor:${state.mRevealed ? 'default' : 'pointer'}">
+      <div class="flash-word">${current.num}</div>
+      ${state.mRevealed
+        ? `<div class="flash-tr">${current.es}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть слово</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.mRevealed ? 'active' : ''}" onclick="${state.mRevealed ? 'answerMatesCard(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.mRevealed ? 'active' : ''}" onclick="${state.mRevealed ? 'answerMatesCard(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealMatesCard() { state.mRevealed = true; render(); }
+
+function answerMatesCard(isKnown) {
+  const current = state.mDeck[state.mIndex];
+  if (isKnown) state.mKnown.push(current); else state.mUnknown.push(current);
+  if (state.mIndex + 1 < state.mDeck.length) {
+    state.mIndex++;
+    state.mRevealed = false;
+  } else {
+    state.mFinished = true;
+  }
+  render();
+}
+
+function reviewMatesCards() {
+  state.mDeck = shuffle(state.mUnknown);
+  state.mKnown = [];
+  state.mUnknown = [];
+  state.mIndex = 0;
+  state.mRevealed = false;
+  state.mFinished = false;
+  render();
+}
+
+/* --- Числа: тест с выбором варианта --- */
+
+function goMatesQuiz() {
+  state.view = "matesQuiz";
+  state.mqDeck = shuffle(NUMBERS).map(n => {
+    const distractors = shuffle(NUMBERS.filter(x => x.num !== n.num)).slice(0, 2).map(x => x.es);
+    return { ...n, shuffledOptions: shuffle([n.es, ...distractors]) };
+  });
+  state.mqIndex = 0;
+  state.mqSelected = null;
+  state.mqScore = 0;
+  state.mqWrong = [];
+  state.mqFinished = false;
+  render();
+}
+
+function renderMatesQuiz() {
+  const total = state.mqDeck.length;
+
+  if (state.mqFinished) {
+    const allCorrect = state.mqWrong.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goMates()">← Mates</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mates · Тест</div>
+      <div class="result-box">
+        <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allCorrect ? `Все ${total} правильно!` : `Правильно: ${state.mqScore} из ${total}`}</div>
+        ${!allCorrect ? `<div class="chip-list">${state.mqWrong.map(w => `<div class="chip">${w.num} — ${w.es}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          <button class="btn-primary" onclick="goMatesQuiz()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const q = state.mqDeck[state.mqIndex];
+  const answered = state.mqSelected !== null;
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goMates()">← Mates</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mates · Тест</div>
+
+    <div class="progress-dots">
+      ${state.mqDeck.map((_, i) => `<div style="background:${i < state.mqIndex ? '#a855f7' : i === state.mqIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" style="cursor:default; min-height:auto;">
+      <div class="quiz-sentence">${q.num}</div>
+
+      <div class="quiz-options">
+        ${q.shuffledOptions.map(opt => {
+          let cls = "option-btn";
+          if (answered) {
+            cls += " disabled";
+            if (opt === q.es) cls += " correct";
+            else if (opt === state.mqSelected) cls += " wrong";
+          }
+          return `<button class="${cls}" onclick="${answered ? '' : `selectMatesQuizAnswer('${opt}')`}">${opt}</button>`;
+        }).join("")}
+      </div>
+
+      ${answered ? `<button class="next-btn" onclick="nextMatesQuizQuestion()">${state.mqIndex + 1 < total ? 'Дальше →' : 'Результаты →'}</button>` : ""}
+    </div>
+
+    <div class="counter">${state.mqIndex + 1} из ${total}</div>
+  `;
+}
+
+function selectMatesQuizAnswer(opt) {
+  state.mqSelected = opt;
+  const q = state.mqDeck[state.mqIndex];
+  if (opt === q.es) {
+    state.mqScore++;
+  } else {
+    state.mqWrong.push(q);
+  }
+  render();
+}
+
+function nextMatesQuizQuestion() {
+  if (state.mqIndex + 1 < state.mqDeck.length) {
+    state.mqIndex++;
+    state.mqSelected = null;
+    render();
+  } else {
+    state.mqFinished = true;
+    render();
+  }
 }
 
 function goTopic() {
