@@ -680,6 +680,22 @@ const NUMBERS = [
   { num: 21, es: "veintiuno" }, { num: 22, es: "veintidós" }, { num: 23, es: "veintitrés" },
 ];
 
+const ANIMALS_COUNT = [
+  { es: "león", plural: "leones", ru: "лев", emoji: "🦁" },
+  { es: "tigre", plural: "tigres", ru: "тигр", emoji: "🐯" },
+  { es: "elefante", plural: "elefantes", ru: "слон", emoji: "🐘" },
+  { es: "camello", plural: "camellos", ru: "верблюд", emoji: "🐫" },
+  { es: "jirafa", plural: "jirafas", ru: "жираф", emoji: "🦒" },
+  { es: "delfín", plural: "delfines", ru: "дельфин", emoji: "🐬" },
+  { es: "ballena", plural: "ballenas", ru: "кит", emoji: "🐋" },
+  { es: "ardilla", plural: "ardillas", ru: "белка", emoji: "🐿️" },
+  { es: "cigüeña", plural: "cigüeñas", ru: "аист", emoji: "🦢" },
+  { es: "cocodrilo", plural: "cocodrilos", ru: "крокодил", emoji: "🐊" },
+  { es: "pingüino", plural: "pingüinos", ru: "пингвин", emoji: "🐧" },
+  { es: "lince", plural: "linces", ru: "рысь (иберийская)", emoji: "🐆" },
+  { es: "conejo", plural: "conejos", ru: "кролик", emoji: "🐰" },
+];
+
 /* ═══════════════ СОСТОЯНИЕ ═══════════════ */
 
 let state = {
@@ -710,6 +726,9 @@ let state = {
   // ── Mates: числа 0-23 ──
   mDeck: [], mIndex: 0, mRevealed: false, mKnown: [], mUnknown: [], mFinished: false,
   mqDeck: [], mqIndex: 0, mqSelected: null, mqScore: 0, mqWrong: [], mqFinished: false,
+
+  // ── Mates: ¿Cuántos animales hay? ──
+  acDeck: [], acIndex: 0, acSelected: null, acScore: 0, acWrong: [], acFinished: false,
 };
 
 const app = document.getElementById("app");
@@ -741,6 +760,7 @@ function render() {
   if (state.view === "numbersTopic") return renderNumbersTopic();
   if (state.view === "matesCards") return renderMatesCards();
   if (state.view === "matesQuiz") return renderMatesQuiz();
+  if (state.view === "animalsCount") return renderAnimalsCountQuiz();
 }
 
 /* ═══════════════ ГЛАВНАЯ ═══════════════ */
@@ -938,6 +958,14 @@ function renderNumbersTopic() {
       </div>
       <div class="arrow">→</div>
     </div>
+
+    <div class="link-card" onclick="goAnimalsCountQuiz()">
+      <div>
+        <div class="label-big">🦁 ¿Cuántos animales hay?</div>
+        <div class="label-sub">Посчитай животных и выбери число по-испански</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
   `;
 }
 
@@ -1112,6 +1140,101 @@ function nextMatesQuizQuestion() {
     render();
   } else {
     state.mqFinished = true;
+    render();
+  }
+}
+
+/* --- ¿Cuántos animales hay? --- */
+
+function goAnimalsCountQuiz() {
+  state.view = "animalsCount";
+  state.acDeck = shuffle(ANIMALS_COUNT).map(a => {
+    const count = 1 + Math.floor(Math.random() * 12); // 1..12
+    const correct = NUMBERS.find(n => n.num === count).es;
+    const distractorCounts = shuffle(NUMBERS.filter(n => n.num !== count && n.num >= 1 && n.num <= 12)).slice(0, 2);
+    const shuffledOptions = shuffle([correct, ...distractorCounts.map(n => n.es)]);
+    return { ...a, count, correct, shuffledOptions };
+  });
+  state.acIndex = 0;
+  state.acSelected = null;
+  state.acScore = 0;
+  state.acWrong = [];
+  state.acFinished = false;
+  render();
+}
+
+function renderAnimalsCountQuiz() {
+  const total = state.acDeck.length;
+
+  if (state.acFinished) {
+    const allCorrect = state.acWrong.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · ¿Cuántos animales hay?</div>
+      <div class="result-box">
+        <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allCorrect ? `Все ${total} правильно!` : `Правильно: ${state.acScore} из ${total}`}</div>
+        ${!allCorrect ? `<div class="chip-list">${state.acWrong.map(w => `<div class="chip">${w.count} ${w.plural} — ${w.correct}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          <button class="btn-primary" onclick="goAnimalsCountQuiz()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const q = state.acDeck[state.acIndex];
+  const answered = state.acSelected !== null;
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goNumbersTopic()">← Números</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Mates · Números · ¿Cuántos animales hay?</div>
+
+    <div class="progress-dots">
+      ${state.acDeck.map((_, i) => `<div style="background:${i < state.acIndex ? '#a855f7' : i === state.acIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" style="cursor:default; min-height:auto;">
+      <div style="font-size:34px; line-height:1.5; letter-spacing:4px;">${q.emoji.repeat(q.count)}</div>
+      <div class="quiz-sentence" style="margin-top:10px;">¿Cuántos ${q.plural} hay?</div>
+
+      <div class="quiz-options">
+        ${q.shuffledOptions.map(opt => {
+          let cls = "option-btn";
+          if (answered) {
+            cls += " disabled";
+            if (opt === q.correct) cls += " correct";
+            else if (opt === state.acSelected) cls += " wrong";
+          }
+          return `<button class="${cls}" onclick="${answered ? '' : `selectAnimalsCountAnswer('${opt}')`}">${opt}</button>`;
+        }).join("")}
+      </div>
+
+      ${answered ? `<button class="next-btn" onclick="nextAnimalsCountQuestion()">${state.acIndex + 1 < total ? 'Дальше →' : 'Результаты →'}</button>` : ""}
+    </div>
+
+    <div class="counter">${state.acIndex + 1} из ${total}</div>
+  `;
+}
+
+function selectAnimalsCountAnswer(opt) {
+  state.acSelected = opt;
+  const q = state.acDeck[state.acIndex];
+  if (opt === q.correct) {
+    state.acScore++;
+  } else {
+    state.acWrong.push(q);
+  }
+  render();
+}
+
+function nextAnimalsCountQuestion() {
+  if (state.acIndex + 1 < state.acDeck.length) {
+    state.acIndex++;
+    state.acSelected = null;
+    render();
+  } else {
+    state.acFinished = true;
     render();
   }
 }
