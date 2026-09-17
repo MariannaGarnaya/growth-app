@@ -696,6 +696,56 @@ const ANIMALS_COUNT = [
   { es: "conejo", plural: "conejos", ru: "кролик", emoji: "🐰" },
 ];
 
+/* ═══════════════ GRAMÁTICA — PLURAL Y SINGULAR DE SUSTANTIVOS ═══════════════ */
+
+/* Слова для карточек и теста: единственное → множественное число.
+   rule — короткая подпись правила (показывается при перевороте карточки) */
+const PLURALS = [
+  { es: "la mesa", plural: "las mesas", ru: "стол", rule: "гласная + s", options: ["las mesas", "las mesaes", "las meses"] },
+  { es: "el chico", plural: "los chicos", ru: "мальчик", rule: "гласная + s", options: ["los chicos", "los chicoes", "los chics"] },
+  { es: "el libro", plural: "los libros", ru: "книга", rule: "гласная + s", options: ["los libros", "los libroes", "los libres"] },
+  { es: "la ventana", plural: "las ventanas", ru: "окно", rule: "гласная + s", options: ["las ventanas", "las ventanaes", "las ventanes"] },
+  { es: "el tren", plural: "los trenes", ru: "поезд", rule: "согласная + es", options: ["los trenes", "los trens", "los trenos"] },
+  { es: "el profesor", plural: "los profesores", ru: "учитель", rule: "согласная + es", options: ["los profesores", "los profesors", "los profesoros"] },
+  { es: "el animal", plural: "los animales", ru: "животное", rule: "согласная + es", options: ["los animales", "los animals", "los animalos"] },
+  { es: "el avión", plural: "los aviones", ru: "самолёт", rule: "согласная + es (без ударения в мн.ч.)", options: ["los aviones", "los aviónes", "los avions"] },
+  { es: "la estación", plural: "las estaciones", ru: "станция, вокзал", rule: "согласная + es (без ударения в мн.ч.)", options: ["las estaciones", "las estaciónes", "las estacions"] },
+  { es: "el lápiz", plural: "los lápices", ru: "карандаш", rule: "-z → -ces", options: ["los lápices", "los lápizs", "los lápizes"] },
+  { es: "el pez", plural: "los peces", ru: "рыба", rule: "-z → -ces", options: ["los peces", "los pezs", "los pezes"] },
+  { es: "la voz", plural: "las voces", ru: "голос", rule: "-z → -ces", options: ["las voces", "las vozs", "las vozes"] },
+  { es: "el autobús", plural: "los autobuses", ru: "автобус", rule: "ударная гласная + s → es", options: ["los autobuses", "los autobúses", "los autobuss"] },
+  { es: "el inglés", plural: "los ingleses", ru: "англичанин", rule: "ударная гласная + s → es", options: ["los ingleses", "los inglesses", "los ingléses"] },
+  { es: "el lunes", plural: "los lunes", ru: "понедельник", rule: "не меняется (-s без ударения)", options: ["los lunes", "los luneses", "los luness"] },
+  { es: "el virus", plural: "los virus", ru: "вирус", rule: "не меняется", options: ["los virus", "los viruses", "los virúes"] },
+  { es: "el paraguas", plural: "los paraguas", ru: "зонт", rule: "не меняется", options: ["los paraguas", "los paraguases", "los paraguass"] },
+];
+
+/* Основные правила — для страницы «Правило» */
+const RULE_BASIC = [
+  { example: "la mesa", exampleP: "las mesas", rule: "гласная -o / -a / -e → + s" },
+  { example: "el tren", exampleP: "los trenes", rule: "согласная или -y → + es" },
+  { example: "la voz", exampleP: "las voces", rule: "-z → меняется на -ces" },
+  { example: "el hindú", exampleP: "los hindúes", rule: "ударная -í / -ú → + s или + es (возможны оба варианта)" },
+  { example: "el lunes / el virus", exampleP: "los lunes / los virus", rule: "уже оканчивается на -s (без ударения) или -x → форма не меняется" },
+  { example: "el autobús", exampleP: "los autobuses", rule: "ударная á/é/í/ó/ú + s → добавляем -es" },
+];
+
+/* Особые случаи — для страницы «Правило» */
+const RULE_SPECIAL = {
+  uncountable: [
+    { es: "el agua", ru: "вода" }, { es: "el dinero", ru: "деньги" },
+    { es: "la basura", ru: "мусор" }, { es: "la leche", ru: "молоко" }, { es: "el pan", ru: "хлеб" },
+  ],
+  collective: [
+    { es: "la familia", ru: "семья" }, { es: "la manada", ru: "стадо" },
+    { es: "el público", ru: "публика" }, { es: "el equipo", ru: "команда" },
+  ],
+  double: [
+    { es: "las gafas", ru: "очки" }, { es: "las tijeras", ru: "ножницы" },
+    { es: "los prismáticos", ru: "бинокль" }, { es: "los pantalones", ru: "брюки" },
+  ],
+};
+
 /* ═══════════════ СОСТОЯНИЕ ═══════════════ */
 
 let state = {
@@ -729,6 +779,10 @@ let state = {
 
   // ── Mates: ¿Cuántos animales hay? ──
   acDeck: [], acIndex: 0, acSelected: null, acScore: 0, acWrong: [], acFinished: false,
+
+  // ── Gramática: Plural y singular ──
+  plDeck: [], plIndex: 0, plRevealed: false, plKnown: [], plUnknown: [], plFinished: false,
+  pqDeck: [], pqIndex: 0, pqSelected: null, pqScore: 0, pqWrong: [], pqFinished: false,
 };
 
 const app = document.getElementById("app");
@@ -761,6 +815,11 @@ function render() {
   if (state.view === "matesCards") return renderMatesCards();
   if (state.view === "matesQuiz") return renderMatesQuiz();
   if (state.view === "animalsCount") return renderAnimalsCountQuiz();
+  if (state.view === "gramatica") return renderGramatica();
+  if (state.view === "pluralTopic") return renderPluralTopic();
+  if (state.view === "pluralRule") return renderPluralRule();
+  if (state.view === "pluralCards") return renderPluralCards();
+  if (state.view === "pluralQuiz") return renderPluralQuiz();
 }
 
 /* ═══════════════ ГЛАВНАЯ ═══════════════ */
@@ -800,6 +859,14 @@ function renderLanding() {
       <div>
         <div class="label-big">🔢 Mates</div>
         <div class="label-sub">Математика на испанском</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="topic-card" onclick="goGramatica()">
+      <div>
+        <div class="label-big">📐 Gramática</div>
+        <div class="label-sub">Грамматика испанского</div>
       </div>
       <div class="arrow">→</div>
     </div>
@@ -1235,6 +1302,290 @@ function nextAnimalsCountQuestion() {
     render();
   } else {
     state.acFinished = true;
+    render();
+  }
+}
+
+/* ═══════════════ GRAMÁTICA ═══════════════ */
+
+function goGramatica() {
+  state.view = "gramatica";
+  render();
+}
+
+function renderGramatica() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goLanding()">← Home</button>
+    <div class="eyebrow">Gramática</div>
+    <div class="page-title">Темы</div>
+
+    <div class="topic-card" onclick="goPluralTopic()">
+      <div>
+        <div class="label-small">Тема 1</div>
+        <div class="label-big">Plural y singular</div>
+        <div class="label-sub">Единственное и множественное число существительных</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+/* --- Тема: Plural y singular --- */
+
+function goPluralTopic() {
+  state.view = "pluralTopic";
+  render();
+}
+
+function renderPluralTopic() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goGramatica()">← Все темы</button>
+    <div class="eyebrow">Gramática · Тема 1</div>
+    <div class="page-title" style="margin-bottom:14px;">Plural y singular</div>
+
+    <div class="link-card" onclick="goPluralRule()">
+      <div>
+        <div class="label-big">📖 Правило</div>
+        <div class="label-sub">Как образуется множественное число + особые случаи</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goPluralCards()">
+      <div>
+        <div class="label-big">🔤 Карточки</div>
+        <div class="label-sub">Единственное число → образуй множественное</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="link-card" onclick="goPluralQuiz()">
+      <div>
+        <div class="label-big">✏️ Тест</div>
+        <div class="label-sub">Выбери правильную форму множественного числа</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+  `;
+}
+
+/* --- Plural y singular: страница «Правило» --- */
+
+function goPluralRule() {
+  state.view = "pluralRule";
+  render();
+}
+
+function renderPluralRule() {
+  app.innerHTML = `
+    <button class="back-btn" onclick="goPluralTopic()">← Plural y singular</button>
+    <div class="eyebrow" style="margin-bottom:2px;">Gramática · Plural y singular</div>
+    <div class="page-title" style="margin-bottom:14px;">Правило</div>
+
+    <div class="mat-section" id="sec-pl-basic">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Основные случаи</span></div>
+      <div class="mat-card">
+        ${RULE_BASIC.map(r => `
+          <div class="mat-row-stacked">
+            <div class="main"><b>${r.example}</b> → <b>${r.exampleP}</b></div>
+            <div class="sub">${r.rule}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="mat-section" id="sec-pl-special">
+      <div class="mat-header"><span class="icon">🟣</span><span class="title">Особые случаи</span></div>
+
+      <div class="mat-subhead">Неисчисляемые — только ед. число</div>
+      <div class="mat-card">
+        ${RULE_SPECIAL.uncountable.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+
+      <div class="mat-subhead">Собирательные — ед. число = группа</div>
+      <div class="mat-card">
+        ${RULE_SPECIAL.collective.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+
+      <div class="mat-subhead">Только мн. число — парные предметы</div>
+      <div class="mat-card">
+        ${RULE_SPECIAL.double.map(w => `<div class="mat-row-inline"><span class="es">${w.es}</span><span class="ru">${w.ru}</span></div>`).join("")}
+      </div>
+
+      <div class="mat-note"><b>Запомни:</b> вещества, материалы и продукты (agua, leche, pan…) не считают поштучно, поэтому у них нет формы множественного числа. А слова вроде gafas, tijeras — наоборот, всегда во множественном, даже если предмет один.</div>
+    </div>
+  `;
+}
+
+/* --- Plural y singular: карточки знаю/не знаю --- */
+
+function goPluralCards() {
+  state.view = "pluralCards";
+  state.plDeck = shuffle(PLURALS);
+  state.plIndex = 0;
+  state.plRevealed = false;
+  state.plKnown = [];
+  state.plUnknown = [];
+  state.plFinished = false;
+  render();
+}
+
+function renderPluralCards() {
+  const total = state.plDeck.length;
+  const progressDone = state.plKnown.length + state.plUnknown.length;
+
+  if (state.plFinished) {
+    const allKnown = state.plUnknown.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goPluralTopic()">← Plural y singular</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Gramática · Plural y singular · Карточки</div>
+      <div class="result-box">
+        <div class="result-emoji">${allKnown ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allKnown ? "Все слова выучены!" : `Знаешь ${state.plKnown.length} из ${total}`}</div>
+        ${!allKnown ? `<div class="chip-list">${state.plUnknown.map(w => `<div class="chip">${w.es} — ${w.plural}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          ${!allKnown ? `<button class="btn-primary" onclick="reviewPluralCards()">Повторить сложные</button>` : ""}
+          <button class="btn-secondary" onclick="goPluralCards()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const current = state.plDeck[state.plIndex];
+  app.innerHTML = `
+    <button class="back-btn" onclick="goPluralTopic()">← Plural y singular</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Gramática · Plural y singular · Карточки</div>
+
+    <div class="progress-dots">
+      ${state.plDeck.map((_, i) => `<div style="background:${i < progressDone ? '#a855f7' : i === progressDone ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" onclick="${state.plRevealed ? '' : 'revealPluralCard()'}" style="cursor:${state.plRevealed ? 'default' : 'pointer'}">
+      <div class="flash-tag">${current.ru}</div>
+      <div class="flash-word">${current.es}</div>
+      ${state.plRevealed
+        ? `<div class="flash-tr">${current.plural}</div><div class="flash-hint">${current.rule}</div>`
+        : `<div class="flash-hint">нажми, чтобы увидеть множественное число</div>`}
+    </div>
+
+    <div class="answer-btns">
+      <button class="no ${state.plRevealed ? 'active' : ''}" onclick="${state.plRevealed ? 'answerPluralCard(false)' : ''}">Не знаю</button>
+      <button class="yes ${state.plRevealed ? 'active' : ''}" onclick="${state.plRevealed ? 'answerPluralCard(true)' : ''}">Знаю</button>
+    </div>
+
+    <div class="counter">${progressDone + 1} из ${total}</div>
+  `;
+}
+
+function revealPluralCard() { state.plRevealed = true; render(); }
+
+function answerPluralCard(isKnown) {
+  const current = state.plDeck[state.plIndex];
+  if (isKnown) state.plKnown.push(current); else state.plUnknown.push(current);
+  if (state.plIndex + 1 < state.plDeck.length) {
+    state.plIndex++;
+    state.plRevealed = false;
+  } else {
+    state.plFinished = true;
+  }
+  render();
+}
+
+function reviewPluralCards() {
+  state.plDeck = shuffle(state.plUnknown);
+  state.plKnown = [];
+  state.plUnknown = [];
+  state.plIndex = 0;
+  state.plRevealed = false;
+  state.plFinished = false;
+  render();
+}
+
+/* --- Plural y singular: тест с выбором варианта --- */
+
+function goPluralQuiz() {
+  state.view = "pluralQuiz";
+  state.pqDeck = shuffle(PLURALS).map(w => ({ ...w, shuffledOptions: shuffle(w.options) }));
+  state.pqIndex = 0;
+  state.pqSelected = null;
+  state.pqScore = 0;
+  state.pqWrong = [];
+  state.pqFinished = false;
+  render();
+}
+
+function renderPluralQuiz() {
+  const total = state.pqDeck.length;
+
+  if (state.pqFinished) {
+    const allCorrect = state.pqWrong.length === 0;
+    app.innerHTML = `
+      <button class="back-btn" onclick="goPluralTopic()">← Plural y singular</button>
+      <div class="eyebrow" style="margin-bottom:14px;">Gramática · Plural y singular · Тест</div>
+      <div class="result-box">
+        <div class="result-emoji">${allCorrect ? "🌟" : "🐻"}</div>
+        <div class="result-title">${allCorrect ? `Все ${total} правильно!` : `Правильно: ${state.pqScore} из ${total}`}</div>
+        ${!allCorrect ? `<div class="chip-list">${state.pqWrong.map(w => `<div class="chip">${w.es} — ${w.plural}</div>`).join("")}</div>` : ""}
+        <div class="result-btns">
+          <button class="btn-primary" onclick="goPluralQuiz()">Начать заново</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const q = state.pqDeck[state.pqIndex];
+  const answered = state.pqSelected !== null;
+
+  app.innerHTML = `
+    <button class="back-btn" onclick="goPluralTopic()">← Plural y singular</button>
+    <div class="eyebrow" style="margin-bottom:14px;">Gramática · Plural y singular · Тест</div>
+
+    <div class="progress-dots">
+      ${state.pqDeck.map((_, i) => `<div style="background:${i < state.pqIndex ? '#a855f7' : i === state.pqIndex ? '#d8b4fe' : '#ede9fe'}"></div>`).join("")}
+    </div>
+
+    <div class="flash-card" style="cursor:default; min-height:auto;">
+      <div class="flash-tag">${q.ru}</div>
+      <div class="quiz-sentence">${q.es}</div>
+
+      <div class="quiz-options">
+        ${q.shuffledOptions.map(opt => {
+          let cls = "option-btn";
+          if (answered) {
+            cls += " disabled";
+            if (opt === q.plural) cls += " correct";
+            else if (opt === state.pqSelected) cls += " wrong";
+          }
+          return `<button class="${cls}" onclick="${answered ? '' : `selectPluralQuizAnswer('${opt}')`}">${opt}</button>`;
+        }).join("")}
+      </div>
+
+      ${answered ? `<button class="next-btn" onclick="nextPluralQuizQuestion()">${state.pqIndex + 1 < total ? 'Дальше →' : 'Результаты →'}</button>` : ""}
+    </div>
+
+    <div class="counter">${state.pqIndex + 1} из ${total}</div>
+  `;
+}
+
+function selectPluralQuizAnswer(opt) {
+  state.pqSelected = opt;
+  const q = state.pqDeck[state.pqIndex];
+  if (opt === q.plural) {
+    state.pqScore++;
+  } else {
+    state.pqWrong.push(q);
+  }
+  render();
+}
+
+function nextPluralQuizQuestion() {
+  if (state.pqIndex + 1 < state.pqDeck.length) {
+    state.pqIndex++;
+    state.pqSelected = null;
+    render();
+  } else {
+    state.pqFinished = true;
     render();
   }
 }
